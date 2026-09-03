@@ -1,0 +1,63 @@
+name: FluentEDI
+description: 45 deterministic tools for AI agents, free and with no API key, signup or rate limit. Every
+  tool is a single stateless GET or POST returning JSON, read-only and idempotent. Coverage runs deepest
+  in retail EDI -- X12 850/856/810/855/997 parsing, generating an 856 with correct HL parent pointers
+  and a fixed-width 106-character ISA, envelope validation, decoding a 997 acknowledgment into plain language,
+  and GS1 check digits -- alongside timezone and delivery-window arithmetic, cron, exact maths, JSON repair
+  with line/column error localisation, JSONPath, RFC 8785 canonical JSON with CIDv1, Ed25519/ECDSA/RSA
+  signature verification, secret and PII scanning, link-liveness checking with retraction detection, endpoint
+  assertion, and text position conversion.
+url: https://raw.githubusercontent.com/api-evangelist/fluentedi/refs/heads/main/apis.yml
+created: '2026-09-03'
+modified: '2026-09-03'
+specificationVersion: '0.21'
+tags:
+- EDI
+- X12
+- Retail EDI
+- AI Agents
+- MCP
+- Developer Tools
+- JSON
+- Cryptography
+- Data Validation
+- Supply Chain
+apis:
+- name: FluentEDI Tools API
+  description: Stateless HTTP tool API. 50 paths and 99 operations in the served OpenAPI 3.1, no authentication.
+    A failed call returns the tool parameter schema plus working example URLs.
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - EDI
+  - X12
+  - AI Agents
+  - MCP
+  - Developer Tools
+  properties:
+  - type: OpenAPI
+    url: https://fluentedi.com/openapi.json
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: MCPServer
+    url: https://fluentedi.com/mcp
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+maintainers:
+- FN: FluentEDI
+  url: https://fluentedi.com/
+x-source:
+  via: api-search/inbox#14, submitted by the provider 2026-08-24
+  fetched: '2026-09-03'
+  note: Every property above was fetched and returned 200 before this record was written; an invented
+    control path returns 404, so the host discriminates. Published to the official MCP registry as com.fluentedi/tools.
