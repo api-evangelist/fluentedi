@@ -1,0 +1,1162 @@
+generated: '2026-09-03'
+method: generated
+source: openapi/fluentedi-openapi.json
+description: >-
+  Recommended x-agentic-access execution contracts for every operation in the served OpenAPI.
+  Unusually for this artifact, the classification is not heuristic guesswork: the provider
+  itself declares side_effects "none - every tool is read-only and idempotent" and
+  statefulness "stateless" in /.well-known/ai, and names exactly which tools reach the network
+  on the caller's behalf. Every operation is therefore action-class connected / consequence
+  read, with no human-in-the-loop requirement anywhere. The only axis that varies is data
+  egress: seven tools send the caller's input to a third party (a URL fetch, a DNS or RDAP
+  query, an MX lookup, an ECB rate fetch), which is the one thing an agent operator may want
+  to gate even though none of them writes anything.
+provider_declaration:
+  url: https://fluentedi.com/.well-known/ai
+  side_effects: none - every tool is read-only and idempotent
+  statefulness: stateless; request bodies are processed in memory and discarded
+  authentication: none
+summary:
+  operations: 99
+  by_action_class:
+    connected: 99
+    acting: 0
+  by_consequence:
+    read: 99
+    write: 0
+    physical: 0
+    safety-critical: 0
+  human_in_the_loop_required: 0
+  network_egress_operations: 14
+operations:
+- path: /v1/time/now
+  method: get
+  operationId: time_now_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/now
+  method: post
+  operationId: time_now_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/convert
+  method: get
+  operationId: time_convert_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/convert
+  method: post
+  operationId: time_convert_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/add
+  method: get
+  operationId: time_add_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/add
+  method: post
+  operationId: time_add_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/diff
+  method: get
+  operationId: time_diff_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/diff
+  method: post
+  operationId: time_diff_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/window
+  method: get
+  operationId: time_window_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/window
+  method: post
+  operationId: time_window_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/zones
+  method: get
+  operationId: time_zones_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/time/zones
+  method: post
+  operationId: time_zones_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/cron/next
+  method: get
+  operationId: cron_next_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/cron/next
+  method: post
+  operationId: cron_next_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/query
+  method: get
+  operationId: json_query_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/query
+  method: post
+  operationId: json_query_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/repair
+  method: get
+  operationId: json_repair_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/repair
+  method: post
+  operationId: json_repair_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/canonical
+  method: get
+  operationId: json_canonical_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/canonical
+  method: post
+  operationId: json_canonical_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/diff
+  method: get
+  operationId: json_diff_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/diff
+  method: post
+  operationId: json_diff_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/schema
+  method: get
+  operationId: json_schema_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/json/schema
+  method: post
+  operationId: json_schema_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/api/diff
+  method: get
+  operationId: api_diff_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/api/diff
+  method: post
+  operationId: api_diff_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/csv/convert
+  method: get
+  operationId: csv_convert_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/csv/convert
+  method: post
+  operationId: csv_convert_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/doc/extract
+  method: get
+  operationId: doc_extract_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/doc/extract
+  method: post
+  operationId: doc_extract_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/text/stats
+  method: get
+  operationId: text_stats_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/stats
+  method: post
+  operationId: text_stats_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/case
+  method: get
+  operationId: text_case_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/case
+  method: post
+  operationId: text_case_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/diff
+  method: get
+  operationId: text_diff_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/diff
+  method: post
+  operationId: text_diff_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/offset
+  method: get
+  operationId: text_offset_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/offset
+  method: post
+  operationId: text_offset_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/unicode
+  method: get
+  operationId: text_unicode_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/text/unicode
+  method: post
+  operationId: text_unicode_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/shell/quote
+  method: get
+  operationId: shell_quote_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/shell/quote
+  method: post
+  operationId: shell_quote_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/regex/test
+  method: get
+  operationId: regex_test_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/regex/test
+  method: post
+  operationId: regex_test_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/hash
+  method: get
+  operationId: hash_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/hash
+  method: post
+  operationId: hash_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/crypto/verify
+  method: get
+  operationId: crypto_verify_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/crypto/verify
+  method: post
+  operationId: crypto_verify_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/jwt/decode
+  method: get
+  operationId: jwt_decode_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/jwt/decode
+  method: post
+  operationId: jwt_decode_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/encode
+  method: get
+  operationId: encode_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/encode
+  method: post
+  operationId: encode_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/id/generate
+  method: get
+  operationId: id_generate_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/id/generate
+  method: post
+  operationId: id_generate_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/math/eval
+  method: get
+  operationId: math_eval_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/math/eval
+  method: post
+  operationId: math_eval_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/unit/convert
+  method: get
+  operationId: unit_convert_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/unit/convert
+  method: post
+  operationId: unit_convert_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/color/convert
+  method: get
+  operationId: color_convert_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/color/convert
+  method: post
+  operationId: color_convert_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/money/convert
+  method: get
+  operationId: money_convert_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/money/convert
+  method: post
+  operationId: money_convert_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/url/parse
+  method: get
+  operationId: url_parse_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/url/parse
+  method: post
+  operationId: url_parse_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/url/scan
+  method: get
+  operationId: url_scan_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/url/scan
+  method: post
+  operationId: url_scan_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/secret/scan
+  method: get
+  operationId: secret_scan_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/secret/scan
+  method: post
+  operationId: secret_scan_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/http/check
+  method: get
+  operationId: http_check_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/http/check
+  method: post
+  operationId: http_check_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/http/assert
+  method: get
+  operationId: http_assert_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/http/assert
+  method: post
+  operationId: http_assert_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/dns/lookup
+  method: get
+  operationId: dns_lookup_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/dns/lookup
+  method: post
+  operationId: dns_lookup_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/net/inspect
+  method: get
+  operationId: net_inspect_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/net/inspect
+  method: post
+  operationId: net_inspect_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/domain/lookup
+  method: get
+  operationId: domain_lookup_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/domain/lookup
+  method: post
+  operationId: domain_lookup_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/email/validate
+  method: get
+  operationId: email_validate_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/email/validate
+  method: post
+  operationId: email_validate_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: third-party
+    egress-note: >-
+      Declared by the provider as a tool that reaches the network on the caller's behalf;
+      the argument is transmitted to a third party (registry, resolver, or the named URL).
+- path: /v1/edi/parse
+  method: get
+  operationId: edi_parse_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/edi/parse
+  method: post
+  operationId: edi_parse_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/edi/validate
+  method: get
+  operationId: edi_validate_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/edi/validate
+  method: post
+  operationId: edi_validate_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/edi/build
+  method: get
+  operationId: edi_build_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/edi/build
+  method: post
+  operationId: edi_build_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/edi/acknowledge
+  method: get
+  operationId: edi_acknowledge_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/edi/acknowledge
+  method: post
+  operationId: edi_acknowledge_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/gs1/checkdigit
+  method: get
+  operationId: gs1_checkdigit_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/gs1/checkdigit
+  method: post
+  operationId: gs1_checkdigit_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/id/validate
+  method: get
+  operationId: id_validate_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/id/validate
+  method: post
+  operationId: id_validate_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/tool/search
+  method: get
+  operationId: tool_search_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/tool/search
+  method: post
+  operationId: tool_search_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/tool/describe
+  method: get
+  operationId: tool_describe_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/tool/describe
+  method: post
+  operationId: tool_describe_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/tool/call
+  method: get
+  operationId: tool_call_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/tool/call
+  method: post
+  operationId: tool_call_post
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none
+- path: /v1/batch
+  method: post
+  operationId: batch
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: not-required
+    token: none
+    escalation: none
+    reversible: n/a
+    data-egress: none

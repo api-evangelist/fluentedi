@@ -1,0 +1,78 @@
+generated: '2026-09-03'
+method: probed
+source: live error responses from https://fluentedi.com/v1/* plus openapi/fluentedi-openapi.json 400 responses
+docs: https://fluentedi.com/llms.txt
+format: vendor-json
+rfc9457: false
+note: >-
+  Errors are not RFC 9457 problem+json. They use a provider-specific envelope served as
+  application/json. What makes the envelope unusual is what it carries beyond the message: a failed
+  call returns the tool's complete JSON Schema parameter block and an array of working example URLs,
+  so an agent that gets a 400 has everything it needs to make the next call succeed without a
+  documentation round trip. Every code and body below was observed live on 2026-09-03, not read off
+  a docs page.
+envelope:
+  success: '{ "ok": true, "tool": "<name>", "result": { ... } }'
+  failure: '{ "ok": false, "tool": "<name>", "error": { "code": "...", "message": "...", "details": {...} }, "parameters": { <JSON Schema> }, "working_examples": [ { "description", "url", "args" } ], "documentation": "https://fluentedi.com/v1/tools/<tool>" }'
+  discriminator: the boolean `ok` field
+problem_types:
+- code: invalid_input
+  http_status: 400
+  title: Invalid or missing parameter
+  meaning: A required parameter is absent, or a supplied value is not acceptable for the tool.
+  remediation: >-
+    Read the `parameters` schema and `working_examples` returned in the same body and retry. The
+    message names the specific parameter and, where one exists, the tool that can enumerate valid
+    values.
+  observed:
+  - url: https://fluentedi.com/v1/gs1/checkdigit
+    message: Missing required parameter "code" for gs1.checkdigit.
+    details: '{required: [code]}'
+  - url: https://fluentedi.com/v1/time/now?timezone=Not/AZone
+    message: Unknown timezone "Not/AZone". Use an IANA identifier such as "UTC", "America/New_York" or "Asia/Kolkata".
+    details: '{hint: "GET /v1/time/zones lists every supported identifier."}'
+  - url: https://fluentedi.com/v1/http/check?url=not-a-url
+    message: '"not-a-url" is not a valid absolute URL. Include a scheme such as https://.'
+  - url: POST https://fluentedi.com/v1/hash with a malformed JSON body
+    message: 'The request body is not valid JSON: <parser message with position>. Send a JSON object of parameters, or pass them as query parameters on a GET instead.'
+- code: unknown_tool
+  http_status: 404
+  title: No such tool
+  meaning: The path does not name a tool this service exposes.
+  remediation: >-
+    The error body lists every tool with its summary. GET /v1/tools for the machine-readable
+    registry, or call tool.search with a plain-language description of the task.
+  observed:
+  - url: https://fluentedi.com/v1/nope/nope
+    message: No tool named "nope.nope".
+- code: too_many_calls
+  http_status: 400
+  title: Batch too large
+  meaning: A POST to /v1/batch carried more than the 20-call maximum.
+  remediation: Split the batch. The message states both the limit and the count received.
+  observed:
+  - url: POST https://fluentedi.com/v1/batch with 25 calls
+    message: A batch holds at most 20 calls; this one has 25. Split it.
+- code: method_not_allowed
+  http_status: 405
+  title: Unsupported HTTP method
+  meaning: Every tool accepts GET or POST only.
+  remediation: Use GET with query parameters or POST with a JSON body.
+  observed:
+  - url: DELETE https://fluentedi.com/v1/time/now
+    message: Use GET or POST; received DELETE.
+spec_coverage:
+  operations_with_400: 98
+  operations_with_200: 99
+  note: >-
+    98 of the 99 operations declare a 400 alongside their 200; the exception is POST /v1/batch,
+    which returns a per-call result array so that one call's failure does not fail the request.
+    No 401/403 responses are declared anywhere, consistent with an unauthenticated API.
+domain_errors:
+  note: >-
+    Beyond transport errors, the EDI tools return structured domain findings inside a 200 result
+    rather than as HTTP errors - X12 rejection reasons (AK3/AK4/AK5 codes, SE01 segment-count
+    mismatches, ISA fixed-width violations, 856 HL parent-pointer breaks). Those are decoded by
+    edi.validate and edi.acknowledge and documented in the recipes at
+    https://fluentedi.com/recipes/edi-997-rejection-codes; they are the provider's domain, not this
+    catalog's, so they are referenced rather than restated here.

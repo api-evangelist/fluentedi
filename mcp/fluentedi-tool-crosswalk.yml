@@ -1,0 +1,302 @@
+generated: '2026-09-03'
+method: derived
+source: mcp/fluentedi-mcp-tools-list.json + openapi/fluentedi-openapi.json
+note: >-
+  Every MCP tool was bound to the OpenAPI operations that back it. The binding is exact rather than
+  semantic: the served MCP tool name is the REST operationId with the _get / _post suffix removed
+  (time_now -> time_now_get + time_now_post), and the live MCP inputSchema matches the REST
+  parameter set for each. No tool was mapped by guesswork.
+surfaces:
+  openapi:
+    url: https://fluentedi.com/openapi.json
+    file: openapi/fluentedi-openapi.json
+    gated: false
+    paths: 50
+    operations: 99
+  mcp:
+    url: https://fluentedi.com/mcp
+    file: mcp/fluentedi-mcp-tools-list.json
+    gated: false
+    tools_listed: 19
+  graphql: null
+coverage:
+  mcp_tools_listed: 19
+  mcp_tools_bound_to_rest: 19
+  mcp_only: 0
+  rest_tool_families: 50
+  rest_only_tool_families: 31
+  binding_confidence: high
+crosswalk:
+- tool: time_now
+  category: time
+  rest:
+  - time_now_get
+  - time_now_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [timezone, also]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: time_convert
+  category: time
+  rest:
+  - time_convert_get
+  - time_convert_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [time, from, to]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: time_diff
+  category: time
+  rest:
+  - time_diff_get
+  - time_diff_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [from, to, timezone]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: time_window
+  category: time
+  rest:
+  - time_window_get
+  - time_window_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [start, end, duration_hours, instant, timezone, compare_start, compare_end]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: cron_next
+  category: schedule
+  rest:
+  - cron_next_get
+  - cron_next_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [expression, timezone, count, from]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: json_query
+  category: data
+  rest:
+  - json_query_get
+  - json_query_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [json, path, first_only]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: json_repair
+  category: data
+  rest:
+  - json_repair_get
+  - json_repair_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [input, close_truncated]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: doc_extract
+  category: doc
+  rest:
+  - doc_extract_get
+  - doc_extract_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [url, base64, filename, format, max_chars, timeout_ms]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: hash
+  category: crypto
+  rest:
+  - hash_get
+  - hash_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [input, algorithms, hmac_key, input_encoding]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: math_eval
+  category: compute
+  rest:
+  - math_eval_get
+  - math_eval_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [expression, variables, precision]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: http_check
+  category: web
+  rest:
+  - http_check_get
+  - http_check_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [url, max_redirects, timeout_ms]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: http_assert
+  category: web
+  rest:
+  - http_assert_get
+  - http_assert_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [url, method, body, headers, expect_status, expect_headers, expect_json, expect_body_contains, max_response_ms, timeout_ms]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: domain_lookup
+  category: web
+  rest:
+  - domain_lookup_get
+  - domain_lookup_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [query]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: edi_parse
+  category: edi
+  rest:
+  - edi_parse_get
+  - edi_parse_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [input, include_segments]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: edi_validate
+  category: edi
+  rest:
+  - edi_validate_get
+  - edi_validate_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [input, require_levels]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: edi_build
+  category: edi
+  rest:
+  - edi_build_get
+  - edi_build_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [document, data, sender_id, receiver_id, sender_qualifier, receiver_qualifier, control_number, test_indicator, timestamp, include_envelope]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: tool_search
+  category: meta
+  rest:
+  - tool_search_get
+  - tool_search_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [q, limit, detail]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: tool_describe
+  category: meta
+  rest:
+  - tool_describe_get
+  - tool_describe_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [name]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.
+- tool: tool_call
+  category: meta
+  rest:
+  - tool_call_get
+  - tool_call_post
+  binding: one-to-one
+  confidence: high
+  input_parameters: [tool, args]
+  note: >-
+    Same tool over both transports; the REST GET and POST forms take the identical parameter set,
+    and the MCP inputSchema was read live from tools/list.mcp_only: []
+rest_only:
+- operationIds: [batch]
+  tool: null
+  reason: Batch envelope - runs up to 20 tool calls in one HTTP request. MCP has no equivalent, since an MCP client batches at the protocol level.
+- operationIds: [api_diff_get, api_diff_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [color_convert_get, color_convert_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [crypto_verify_get, crypto_verify_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [csv_convert_get, csv_convert_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [dns_lookup_get, dns_lookup_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [edi_acknowledge_get, edi_acknowledge_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name. Notable gap - three of the four EDI tools are listed, the 997/999 acknowledgment decoder is not.
+- operationIds: [email_validate_get, email_validate_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [encode_get, encode_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [gs1_checkdigit_get, gs1_checkdigit_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name. Notable gap - GS1 check digits are the retail-EDI companion to edi_build.
+- operationIds: [id_generate_get, id_generate_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [id_validate_get, id_validate_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [json_canonical_get, json_canonical_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [json_diff_get, json_diff_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [json_schema_get, json_schema_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [jwt_decode_get, jwt_decode_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [money_convert_get, money_convert_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [net_inspect_get, net_inspect_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [regex_test_get, regex_test_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [secret_scan_get, secret_scan_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [shell_quote_get, shell_quote_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [text_case_get, text_case_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [text_diff_get, text_diff_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [text_offset_get, text_offset_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [text_stats_get, text_stats_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [text_unicode_get, text_unicode_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [time_add_get, time_add_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [time_zones_get, time_zones_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [unit_convert_get, unit_convert_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [url_parse_get, url_parse_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.
+- operationIds: [url_scan_get, url_scan_post]
+  reason: Not in the served MCP tools/list; reachable over MCP via tool.call by name.

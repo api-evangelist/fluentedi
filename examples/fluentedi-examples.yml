@@ -1,0 +1,577 @@
+generated: '2026-09-03'
+method: searched
+source: https://fluentedi.com/llms-full.txt
+note: >-
+  Working example requests published by the provider, one or more per tool, extracted verbatim
+  from the agent reference at /llms-full.txt. Every one is a complete GET URL that can be
+  executed with no key. A sample was replayed live on 2026-09-03 and returned 200; the results
+  of that spot-check are recorded under verification below. These are the provider's examples,
+  not examples this catalog wrote.
+example_count: 128
+tools_covered: 49
+examples:
+- tool: time.now
+  endpoint: https://fluentedi.com/v1/time/now
+  requests:
+  - description: "Current time in UTC"
+    method: GET
+    url: "https://fluentedi.com/v1/time/now"
+  - description: "Current time in Tokyo"
+    method: GET
+    url: "https://fluentedi.com/v1/time/now?timezone=Asia%2FTokyo"
+  - description: "One instant across a distributed team"
+    method: GET
+    url: "https://fluentedi.com/v1/time/now?timezone=America%2FLos_Angeles&also=%5B%22Europe%2FLondon%22%2C%22Asia%2FKolkata%22%5D"
+- tool: time.convert
+  endpoint: https://fluentedi.com/v1/time/convert
+  requests:
+  - description: "A London meeting time, in New York and Tokyo"
+    method: GET
+    url: "https://fluentedi.com/v1/time/convert?time=2026-08-22%2009%3A00&from=Europe%2FLondon&to=%5B%22America%2FNew_York%22%2C%22Asia%2FTokyo%22%5D"
+  - description: "Unix timestamp to a human timezone"
+    method: GET
+    url: "https://fluentedi.com/v1/time/convert?time=1755900000&to=%5B%22Asia%2FKolkata%22%5D"
+- tool: time.add
+  endpoint: https://fluentedi.com/v1/time/add
+  requests:
+  - description: "90 days from now"
+    method: GET
+    url: "https://fluentedi.com/v1/time/add?days=90"
+  - description: "Net-30 invoice due date"
+    method: GET
+    url: "https://fluentedi.com/v1/time/add?time=2026-08-22&days=30&timezone=America%2FNew_York"
+  - description: "Five business days out"
+    method: GET
+    url: "https://fluentedi.com/v1/time/add?business_days=5"
+  - description: "One month before a launch"
+    method: GET
+    url: "https://fluentedi.com/v1/time/add?time=2026-03-31&months=-1"
+- tool: time.diff
+  endpoint: https://fluentedi.com/v1/time/diff
+  requests:
+  - description: "Days until a deadline"
+    method: GET
+    url: "https://fluentedi.com/v1/time/diff?to=2026-12-31"
+  - description: "Exact age from a birth date"
+    method: GET
+    url: "https://fluentedi.com/v1/time/diff?from=1990-05-14&to=now"
+  - description: "Working days in a sprint"
+    method: GET
+    url: "https://fluentedi.com/v1/time/diff?from=2026-08-03&to=2026-08-14"
+- tool: time.window
+  endpoint: https://fluentedi.com/v1/time/window
+  requests:
+  - description: "Is the shipment inside its delivery window?"
+    method: GET
+    url: "https://fluentedi.com/v1/time/window?start=2026-08-24T09%3A00%3A00Z&end=2026-08-26T17%3A00%3A00Z"
+  - description: "A 72-hour ASN window from the ship date"
+    method: GET
+    url: "https://fluentedi.com/v1/time/window?start=2026-08-24T09%3A00%3A00Z&duration_hours=72"
+  - description: "How late was this ASN?"
+    method: GET
+    url: "https://fluentedi.com/v1/time/window?start=2026-08-01T00%3A00%3A00Z&end=2026-08-02T00%3A00%3A00Z&instant=2026-08-15T00%3A00%3A00Z"
+  - description: "Do two windows overlap?"
+    method: GET
+    url: "https://fluentedi.com/v1/time/window?start=2026-08-24T09%3A00%3A00Z&end=2026-08-26T17%3A00%3A00Z&compare_start=2026-08-25T00%3A00%3A00Z&compare_end=2026-08-30T00%3A00%3A00Z"
+- tool: time.zones
+  endpoint: https://fluentedi.com/v1/time/zones
+  requests:
+  - description: "Find the identifier for Bangalore"
+    method: GET
+    url: "https://fluentedi.com/v1/time/zones?search=kolkata"
+  - description: "Every Australian zone"
+    method: GET
+    url: "https://fluentedi.com/v1/time/zones?search=australia%2F"
+- tool: cron.next
+  endpoint: https://fluentedi.com/v1/cron/next
+  requests:
+  - description: "Weekday mornings in New York"
+    method: GET
+    url: "https://fluentedi.com/v1/cron/next?expression=0%209%20*%20*%201-5&timezone=America%2FNew_York"
+  - description: "Every 15 minutes"
+    method: GET
+    url: "https://fluentedi.com/v1/cron/next?expression=*%2F15%20*%20*%20*%20*"
+  - description: "Quarterly, first of the month"
+    method: GET
+    url: "https://fluentedi.com/v1/cron/next?expression=0%200%201%20*%2F3%20*&count=4"
+  - description: "Macro shorthand"
+    method: GET
+    url: "https://fluentedi.com/v1/cron/next?expression=%40daily"
+- tool: json.query
+  endpoint: https://fluentedi.com/v1/json/query
+  requests:
+  - description: "Every id in a list"
+    method: GET
+    url: "https://fluentedi.com/v1/json/query?json=%7B%22items%22%3A%5B%7B%22id%22%3A1%2C%22price%22%3A5%7D%2C%7B%22id%22%3A2%2C%22price%22%3A20%7D%5D%7D&path=%24.items%5B*%5D.id"
+  - description: "Filter by a field"
+    method: GET
+    url: "https://fluentedi.com/v1/json/query?json=%7B%22items%22%3A%5B%7B%22id%22%3A1%2C%22price%22%3A5%7D%2C%7B%22id%22%3A2%2C%22price%22%3A20%7D%5D%7D&path=%24.items%5B%3F(%40.price%20%3E%2010)%5D"
+  - description: "Find a key at any depth"
+    method: GET
+    url: "https://fluentedi.com/v1/json/query?json=%7B%22a%22%3A%7B%22b%22%3A%7B%22name%22%3A%22deep%22%7D%7D%7D&path=%24..name"
+- tool: json.repair
+  endpoint: https://fluentedi.com/v1/json/repair
+  requests:
+  - description: "Markdown fence, trailing comma, unquoted key"
+    method: GET
+    url: "https://fluentedi.com/v1/json/repair?input=%60%60%60json%0A%7B%20name%3A%20'Ada'%2C%20tags%3A%20%5B1%2C2%2C%5D%2C%20%7D%0A%60%60%60"
+  - description: "A truncated response"
+    method: GET
+    url: "https://fluentedi.com/v1/json/repair?input=%7B%22items%22%3A%5B%7B%22id%22%3A1%7D%2C%7B%22id%22%3A2"
+  - description: "Python literals in JSON"
+    method: GET
+    url: "https://fluentedi.com/v1/json/repair?input=%7B'ok'%3A%20True%2C%20'value'%3A%20None%7D"
+- tool: json.canonical
+  endpoint: https://fluentedi.com/v1/json/canonical
+  requests:
+  - description: "Same meaning, different key order \u2014 same digest"
+    method: GET
+    url: "https://fluentedi.com/v1/json/canonical?json=%7B%22b%22%3A2%2C%22a%22%3A1%7D"
+  - description: "Content-address a tool call for an audit trail"
+    method: GET
+    url: "https://fluentedi.com/v1/json/canonical?json=%7B%22tool%22%3A%22transfer%22%2C%22args%22%3A%7B%22amount%22%3A100%2C%22to%22%3A%22B%22%2C%22from%22%3A%22A%22%7D%7D"
+- tool: json.diff
+  endpoint: https://fluentedi.com/v1/json/diff
+  requests:
+  - description: "Spot a config change"
+    method: GET
+    url: "https://fluentedi.com/v1/json/diff?a=%7B%22replicas%22%3A2%2C%22image%22%3A%22app%3A1.0%22%7D&b=%7B%22replicas%22%3A3%2C%22image%22%3A%22app%3A1.1%22%2C%22tls%22%3Atrue%7D"
+- tool: json.schema
+  endpoint: https://fluentedi.com/v1/json/schema
+  requests:
+  - description: "Schema from an API response"
+    method: GET
+    url: "https://fluentedi.com/v1/json/schema?json=%7B%22id%22%3A%22a3f%22%2C%22created_at%22%3A%222026-08-22T10%3A00%3A00Z%22%2C%22tags%22%3A%5B%22a%22%2C%22b%22%5D%2C%22score%22%3A4.5%7D"
+- tool: api.diff
+  endpoint: https://fluentedi.com/v1/api/diff
+  requests:
+  - description: "Docs promise a non-null string id and a status enum; the live API drifted"
+    method: GET
+    url: "https://fluentedi.com/v1/api/diff?declared=%7B%22type%22%3A%22object%22%2C%22required%22%3A%5B%22id%22%2C%22status%22%5D%2C%22properties%22%3A%7B%22id%22%3A%7B%22type%22%3A%22string%22%7D%2C%22status%22%3A%7B%22enum%22%3A%5B%22active%22%2C%22closed%22%5D%7D%2C%22total%22%3A%7B%22type%22%3A%22integer%22%7D%7D%7D&observed=%5B%7B%22id%22%3A%22a1%22%2C%22status%22%3A%22active%22%2C%22total%22%3A10%7D%2C%7B%22id%22%3Anull%2C%22status%22%3A%22archived%22%2C%22total%22%3A10.5%2C%22currency%22%3A%22USD%22%7D%5D"
+  - description: "No schema? Diff yesterday's payload against today's"
+    method: GET
+    url: "https://fluentedi.com/v1/api/diff?baseline=%7B%22sku%22%3A%22X1%22%2C%22qty%22%3A4%7D&observed=%7B%22sku%22%3A%22X1%22%2C%22qty%22%3A%224%22%7D"
+- tool: csv.convert
+  endpoint: https://fluentedi.com/v1/csv/convert
+  requests:
+  - description: "CSV with a quoted comma"
+    method: GET
+    url: "https://fluentedi.com/v1/csv/convert?input=name%2Crole%0A%22Doe%2C%20Jane%22%2Cengineer%0AAda%2Cfounder"
+  - description: "Objects back to CSV"
+    method: GET
+    url: "https://fluentedi.com/v1/csv/convert?input=%5B%7B%22name%22%3A%22Ada%22%2C%22role%22%3A%22founder%22%7D%2C%7B%22name%22%3A%22Grace%22%2C%22role%22%3A%22admiral%22%7D%5D&direction=json_to_csv"
+- tool: doc.extract
+  endpoint: https://fluentedi.com/v1/doc/extract
+  requests:
+  - description: "Extract a PDF paper as markdown"
+    method: GET
+    url: "https://fluentedi.com/v1/doc/extract?url=https%3A%2F%2Farxiv.org%2Fpdf%2F1706.03762"
+  - description: "Word document to markdown"
+    method: GET
+    url: "https://fluentedi.com/v1/doc/extract?url=https%3A%2F%2Fcalibre-ebook.com%2Fdownloads%2Fdemos%2Fdemo.docx"
+  - description: "A web page as plain text"
+    method: GET
+    url: "https://fluentedi.com/v1/doc/extract?url=https%3A%2F%2Fexample.com%2F&format=text"
+- tool: text.stats
+  endpoint: https://fluentedi.com/v1/text/stats
+  requests:
+  - description: "Measure a draft"
+    method: GET
+    url: "https://fluentedi.com/v1/text/stats?text=The%20quick%20brown%20fox%20jumps%20over%20the%20lazy%20dog.%20It%20was%20a%20bright%20cold%20day%20in%20April."
+- tool: text.case
+  endpoint: https://fluentedi.com/v1/text/case
+  requests:
+  - description: "Every casing of a phrase"
+    method: GET
+    url: "https://fluentedi.com/v1/text/case?text=User%20Profile%20Settings"
+  - description: "Split an acronym-heavy identifier"
+    method: GET
+    url: "https://fluentedi.com/v1/text/case?text=HTTPServerConfig"
+- tool: text.diff
+  endpoint: https://fluentedi.com/v1/text/diff
+  requests:
+  - description: "Diff two config versions"
+    method: GET
+    url: "https://fluentedi.com/v1/text/diff?a=host%3A%20localhost%0Aport%3A%208080%0A&b=host%3A%200.0.0.0%0Aport%3A%208080%0Atls%3A%20true%0A"
+  - description: "Word-level edits in a sentence"
+    method: GET
+    url: "https://fluentedi.com/v1/text/diff?a=the%20quick%20brown%20fox&b=the%20slow%20brown%20dog&mode=word"
+- tool: text.offset
+  endpoint: https://fluentedi.com/v1/text/offset
+  requests:
+  - description: "Where is UTF-16 index 5 in every counting system?"
+    method: GET
+    url: "https://fluentedi.com/v1/text/offset?text=caf%C3%A9%20%E2%98%95%20done&position=5&unit=utf16"
+  - description: "Convert a line/column pair to an offset"
+    method: GET
+    url: "https://fluentedi.com/v1/text/offset?text=one%0Atwo%0Athree&line=2&column=2"
+  - description: "Measure a string containing an emoji"
+    method: GET
+    url: "https://fluentedi.com/v1/text/offset?text=a%F0%9F%91%A8%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7b&position=1&unit=grapheme"
+- tool: text.unicode
+  endpoint: https://fluentedi.com/v1/text/unicode
+  requests:
+  - description: "Text with a hidden instruction in the TAG block"
+    method: GET
+    url: "https://fluentedi.com/v1/text/unicode?text=Read%20the%20file%F3%A0%80%81%F3%A0%81%A9%F3%A0%81%A7%F3%A0%81%AE%F3%A0%81%AF%F3%A0%81%B2%F3%A0%81%A5"
+  - description: "A Cyrillic lookalike domain"
+    method: GET
+    url: "https://fluentedi.com/v1/text/unicode?text=log%20in%20at%20p%D0%B0ypal.com"
+  - description: "A zero-width space splitting a keyword"
+    method: GET
+    url: "https://fluentedi.com/v1/text/unicode?text=DEL%E2%80%8BETE%20FROM%20users"
+- tool: shell.quote
+  endpoint: https://fluentedi.com/v1/shell/quote
+  requests:
+  - description: "A filename containing a space and a quote"
+    method: GET
+    url: "https://fluentedi.com/v1/shell/quote?value=my%20file's%20name.txt"
+  - description: "A value that would execute if unquoted"
+    method: GET
+    url: "https://fluentedi.com/v1/shell/quote?value=%24(rm%20-rf%20%2F)"
+  - description: "The same value for PowerShell"
+    method: GET
+    url: "https://fluentedi.com/v1/shell/quote?value=it's%20%24HOME&shell=powershell"
+- tool: regex.test
+  endpoint: https://fluentedi.com/v1/regex/test
+  requests:
+  - description: "Extract emails with capture groups"
+    method: GET
+    url: "https://fluentedi.com/v1/regex/test?pattern=(%5B%5Cw.%5D%2B)%40(%5B%5Cw.%5D%2B)&text=ping%20ada%40example.com%20and%20grace%40navy.mil"
+  - description: "Redact digits"
+    method: GET
+    url: "https://fluentedi.com/v1/regex/test?pattern=%5Cd&text=card%204242%204242&operation=replace&replacement=*"
+- tool: hash
+  endpoint: https://fluentedi.com/v1/hash
+  requests:
+  - description: "SHA-256 of a string"
+    method: GET
+    url: "https://fluentedi.com/v1/hash?input=hello%20world"
+  - description: "Verify a webhook signature"
+    method: GET
+    url: "https://fluentedi.com/v1/hash?input=%7B%22event%22%3A%22ping%22%7D&algorithms=%5B%22sha256%22%5D&hmac_key=whsec_test"
+  - description: "Several digests at once"
+    method: GET
+    url: "https://fluentedi.com/v1/hash?input=hello%20world&algorithms=%5B%22md5%22%2C%22sha1%22%2C%22sha256%22%2C%22crc32%22%5D"
+- tool: crypto.verify
+  endpoint: https://fluentedi.com/v1/crypto/verify
+  requests:
+  - description: "Verify an Ed25519 signature (RFC 8032 test vector 2)"
+    method: GET
+    url: "https://fluentedi.com/v1/crypto/verify?message=r&signature=92a009a9f0d4cab8720e820b5f642540a2b27b5416503f8fb3762223ebdb69da085ac1e43e15996e458f3613d0f11d8c387b2eaeb4302aeeb00d291612bb0c00&public_key=3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c&algorithm=ed25519"
+- tool: jwt.decode
+  endpoint: https://fluentedi.com/v1/jwt/decode
+  requests:
+  - description: "Inspect a token's claims and expiry"
+    method: GET
+    url: "https://fluentedi.com/v1/jwt/decode?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+- tool: encode
+  endpoint: https://fluentedi.com/v1/encode
+  requests:
+  - description: "Encode to base64"
+    method: GET
+    url: "https://fluentedi.com/v1/encode?input=hello%20world&to=base64"
+  - description: "Decode a base64 string"
+    method: GET
+    url: "https://fluentedi.com/v1/encode?input=aGVsbG8gd29ybGQ%3D&from=base64&to=text"
+  - description: "Decode a JWT payload segment"
+    method: GET
+    url: "https://fluentedi.com/v1/encode?input=eyJzdWIiOiIxMjMifQ&from=base64url&to=text"
+  - description: "Escape a value for a query string"
+    method: GET
+    url: "https://fluentedi.com/v1/encode?input=a%3D1%26b%3Dhello%20world&to=url_component"
+- tool: id.generate
+  endpoint: https://fluentedi.com/v1/id/generate
+  requests:
+  - description: "One UUIDv4"
+    method: GET
+    url: "https://fluentedi.com/v1/id/generate"
+  - description: "Sortable database keys"
+    method: GET
+    url: "https://fluentedi.com/v1/id/generate?type=uuid7&count=5"
+  - description: "Short URL slugs"
+    method: GET
+    url: "https://fluentedi.com/v1/id/generate?type=nanoid&length=10&count=3"
+- tool: math.eval
+  endpoint: https://fluentedi.com/v1/math/eval
+  requests:
+  - description: "Order of operations"
+    method: GET
+    url: "https://fluentedi.com/v1/math/eval?expression=2%20%2B%203%20*%204%20%5E%202"
+  - description: "Compound interest over 30 years"
+    method: GET
+    url: "https://fluentedi.com/v1/math/eval?expression=principal%20*%20(1%20%2B%20rate)%20%5E%20years&variables=%7B%22principal%22%3A1000%2C%22rate%22%3A0.07%2C%22years%22%3A30%7D"
+  - description: "Functions and constants"
+    method: GET
+    url: "https://fluentedi.com/v1/math/eval?expression=hypot(3%2C%204)%20%2B%20log10(1000)%20%2B%20pi"
+- tool: unit.convert
+  endpoint: https://fluentedi.com/v1/unit/convert
+  requests:
+  - description: "Kilometres to miles"
+    method: GET
+    url: "https://fluentedi.com/v1/unit/convert?value=100&from=km&to=mi"
+  - description: "Celsius to Fahrenheit"
+    method: GET
+    url: "https://fluentedi.com/v1/unit/convert?value=37&from=celsius&to=fahrenheit"
+  - description: "Storage sizes that people confuse"
+    method: GET
+    url: "https://fluentedi.com/v1/unit/convert?value=1&from=tb&to=tib"
+  - description: "Browse supported units"
+    method: GET
+    url: "https://fluentedi.com/v1/unit/convert?list=true"
+- tool: color.convert
+  endpoint: https://fluentedi.com/v1/color/convert
+  requests:
+  - description: "Every notation for one colour"
+    method: GET
+    url: "https://fluentedi.com/v1/color/convert?color=%233b82f6"
+  - description: "Is this text legible on white?"
+    method: GET
+    url: "https://fluentedi.com/v1/color/convert?color=%23767676&against=%23ffffff"
+  - description: "Generate a palette scale"
+    method: GET
+    url: "https://fluentedi.com/v1/color/convert?color=%233b82f6&shades=true"
+- tool: money.convert
+  endpoint: https://fluentedi.com/v1/money/convert
+  requests:
+  - description: "What is $250 in euros today?"
+    method: GET
+    url: "https://fluentedi.com/v1/money/convert?amount=250&from=USD&to=EUR"
+  - description: "One price in several markets"
+    method: GET
+    url: "https://fluentedi.com/v1/money/convert?amount=99&from=USD&to=EUR%2CGBP%2CINR%2CJPY"
+  - description: "Rate on an invoice date"
+    method: GET
+    url: "https://fluentedi.com/v1/money/convert?amount=1000&from=EUR&to=USD&date=2024-03-15"
+- tool: url.parse
+  endpoint: https://fluentedi.com/v1/url/parse
+  requests:
+  - description: "Break a URL into parts"
+    method: GET
+    url: "https://fluentedi.com/v1/url/parse?url=https%3A%2F%2Fapi.example.com%3A8443%2Fv1%2Fitems%3Fpage%3D2%26sort%3Dasc%23results"
+  - description: "Resolve a relative link"
+    method: GET
+    url: "https://fluentedi.com/v1/url/parse?url=..%2Fimages%2Flogo.png&base=https%3A%2F%2Fexample.com%2Fdocs%2Fguide%2F"
+  - description: "Strip campaign parameters"
+    method: GET
+    url: "https://fluentedi.com/v1/url/parse?url=https%3A%2F%2Fshop.com%2Fp%2F1%3Futm_source%3Dx%26utm_medium%3Dy%26id%3D9&strip_tracking=true"
+- tool: url.scan
+  endpoint: https://fluentedi.com/v1/url/scan
+  requests:
+  - description: "A live secret key in a query string"
+    method: GET
+    url: "https://fluentedi.com/v1/url/scan?url=https%3A%2F%2Fapi.example.com%2Fv1%2Fcharges%3Fapi_key%3DREDACTED_STRIPE_KEY"
+  - description: "Credentials embedded in userinfo"
+    method: GET
+    url: "https://fluentedi.com/v1/url/scan?url=https%3A%2F%2Fadmin%3Ahunter2%40internal.example.com%2Fdashboard"
+  - description: "Personal data in a link"
+    method: GET
+    url: "https://fluentedi.com/v1/url/scan?url=https%3A%2F%2Fexample.com%2Freset%3Femail%3Dada%40example.com%26token%3DeyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.abcdefghijk"
+- tool: secret.scan
+  endpoint: https://fluentedi.com/v1/secret/scan
+  requests:
+  - description: "Check a log line before pasting it"
+    method: GET
+    url: "https://fluentedi.com/v1/secret/scan?text=2026-08-24%20ERROR%20auth%20failed%20for%20key%20REDACTED_STRIPE_KEY"
+  - description: "Sanitise an env file"
+    method: GET
+    url: "https://fluentedi.com/v1/secret/scan?text=DATABASE_URL%3Dpostgres%3A%2F%2Fadmin%3Ahunter2%40db.internal%3A5432%2Fapp%0ADEBUG%3Dtrue%0AAPI_TOKEN%3DREDACTED_GITHUB_TOKEN"
+  - description: "Secrets only, ignoring personal data"
+    method: GET
+    url: "https://fluentedi.com/v1/secret/scan?text=contact%20ada%40example.com%20with%20token%20REDACTED_GITHUB_TOKEN&include_pii=false"
+- tool: http.check
+  endpoint: https://fluentedi.com/v1/http/check
+  requests:
+  - description: "Is this paper link still good?"
+    method: GET
+    url: "https://fluentedi.com/v1/http/check?url=https%3A%2F%2Farxiv.org%2Fabs%2F1706.03762"
+  - description: "Follow a shortened link to its destination"
+    method: GET
+    url: "https://fluentedi.com/v1/http/check?url=https%3A%2F%2Fdoi.org%2F10.1038%2Fnature14539"
+- tool: http.assert
+  endpoint: https://fluentedi.com/v1/http/assert
+  requests:
+  - description: "Prove a deployment is serving correctly"
+    method: GET
+    url: "https://fluentedi.com/v1/http/assert?url=https%3A%2F%2Ffluentedi.com%2Fhealth&expect_status=200&expect_json=%7B%22%24.ok%22%3Atrue%7D&max_response_ms=2000"
+  - description: "Check an endpoint returns JSON rather than an error page"
+    method: GET
+    url: "https://fluentedi.com/v1/http/assert?url=https%3A%2F%2Ffluentedi.com%2Fv1%2Ftime%2Fnow&expect_status=2xx&expect_headers=%7B%22content-type%22%3A%22json%22%7D&expect_json=%7B%22%24.ok%22%3Atrue%7D"
+  - description: "Assert a specific value in the response"
+    method: GET
+    url: "https://fluentedi.com/v1/http/assert?url=https%3A%2F%2Ffluentedi.com%2Fv1%2Fmath%2Feval%3Fexpression%3D6*7&expect_json=%7B%22%24.result.result%22%3A42%7D"
+- tool: dns.lookup
+  endpoint: https://fluentedi.com/v1/dns/lookup
+  requests:
+  - description: "Where does a domain point?"
+    method: GET
+    url: "https://fluentedi.com/v1/dns/lookup?name=example.com&type=A"
+  - description: "Mail servers for a domain"
+    method: GET
+    url: "https://fluentedi.com/v1/dns/lookup?name=gmail.com&type=MX"
+  - description: "Read SPF and verification records"
+    method: GET
+    url: "https://fluentedi.com/v1/dns/lookup?name=cloudflare.com&type=TXT"
+- tool: net.inspect
+  endpoint: https://fluentedi.com/v1/net/inspect
+  requests:
+  - description: "Confirm the egress IP and location"
+    method: GET
+    url: "https://fluentedi.com/v1/net/inspect"
+  - description: "Debug what headers arrive at the server"
+    method: GET
+    url: "https://fluentedi.com/v1/net/inspect?include_headers=true"
+- tool: domain.lookup
+  endpoint: https://fluentedi.com/v1/domain/lookup
+  requests:
+  - description: "When does this domain expire, and who runs it?"
+    method: GET
+    url: "https://fluentedi.com/v1/domain/lookup?query=google.com"
+  - description: "Which network owns this IP?"
+    method: GET
+    url: "https://fluentedi.com/v1/domain/lookup?query=8.8.8.8"
+  - description: "Is this domain registered at all?"
+    method: GET
+    url: "https://fluentedi.com/v1/domain/lookup?query=example.org"
+- tool: email.validate
+  endpoint: https://fluentedi.com/v1/email/validate
+  requests:
+  - description: "Full validation with DNS"
+    method: GET
+    url: "https://fluentedi.com/v1/email/validate?email=ada.lovelace%40gmail.com"
+  - description: "Catch a typo before it bounces"
+    method: GET
+    url: "https://fluentedi.com/v1/email/validate?email=someone%40gmial.com"
+  - description: "Syntax-only, no network"
+    method: GET
+    url: "https://fluentedi.com/v1/email/validate?email=billing%40example.com&check_dns=false"
+- tool: edi.parse
+  endpoint: https://fluentedi.com/v1/edi/parse
+  requests:
+  - description: "Parse a purchase order"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/parse?input=ST*850*0001~BEG*00*SA*4500123456**20260822~N1*ST*ACME%20STORES*92*0042~PO1*1*100*EA*9.99**UP*012345678905~CTT*1~SE*6*0001~"
+  - description: "Parse an advance ship notice"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/parse?input=ST*856*0001~BSN*00*SHIP001*20260822*1200*0001~HL*1**S*1~HL*2*1*O*1~HL*3*2*P*1~MAN*GM*006141411234567890~HL*4*3*I~SN1**12*EA~CTT*4~SE*10*0001~"
+- tool: edi.validate
+  endpoint: https://fluentedi.com/v1/edi/validate
+  requests:
+  - description: "Validate an ASN before sending it"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/validate?input=ST*856*0001~BSN*00*SHIP001*20260822*1200*0001~HL*1**S*1~HL*2*1*O*1~HL*3*2*P*1~MAN*GM*006141411234567890~HL*4*3*I~SN1**12*EA~CTT*4~SE*10*0001~"
+  - description: "Catch an orphaned HL parent"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/validate?input=ST*856*0001~BSN*00*S1*20260822*1200*0001~HL*1**S*1~HL*2*9*O~SE*5*0001~"
+  - description: "Require a carton level"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/validate?input=ST*856*0001~BSN*00*S1*20260822*1200*0001~HL*1**S*1~HL*2*1*O*1~HL*3*2*I~SE*6*0001~&require_levels=%5B%22S%22%2C%22O%22%2C%22P%22%2C%22I%22%5D"
+- tool: edi.build
+  endpoint: https://fluentedi.com/v1/edi/build
+  requests:
+  - description: "Build an ASN: one order, two cartons, correct HL tree"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/build?document=856&data=%7B%22shipment_id%22%3A%22SHIP1001%22%2C%22orders%22%3A%5B%7B%22po_number%22%3A%224500123456%22%2C%22packs%22%3A%5B%7B%22sscc%22%3A%22006141411234567890%22%2C%22items%22%3A%5B%7B%22upc%22%3A%22012345678905%22%2C%22quantity%22%3A12%2C%22unit%22%3A%22EA%22%7D%5D%7D%2C%7B%22sscc%22%3A%22006141411234567906%22%2C%22items%22%3A%5B%7B%22upc%22%3A%22012345678905%22%2C%22quantity%22%3A8%2C%22unit%22%3A%22EA%22%7D%5D%7D%5D%7D%5D%2C%22parties%22%3A%5B%7B%22role%22%3A%22ST%22%2C%22name%22%3A%22ACME%20STORES%22%2C%22id%22%3A%220042%22%7D%5D%7D"
+  - description: "Build a purchase order"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/build?document=850&data=%7B%22po_number%22%3A%22PO-9001%22%2C%22order_date%22%3A%222026-08-24%22%2C%22lines%22%3A%5B%7B%22quantity%22%3A100%2C%22unit%22%3A%22EA%22%2C%22unit_price%22%3A9.99%2C%22upc%22%3A%22012345678905%22%7D%5D%2C%22parties%22%3A%5B%7B%22role%22%3A%22ST%22%2C%22name%22%3A%22ACME%20STORES%22%2C%22id%22%3A%220042%22%7D%5D%7D"
+- tool: edi.acknowledge
+  endpoint: https://fluentedi.com/v1/edi/acknowledge
+  requests:
+  - description: "A clean acceptance"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/acknowledge?input=ST*997*0001~AK1*SH*1~AK2*856*0001~AK5*A~AK9*A*1*1*1~SE*6*0001~"
+  - description: "A rejection, decoded down to the element"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/acknowledge?input=ST*997*0002~AK1*SH*12~AK2*856*0001~AK3*HL*4**7~AK4*2**7*XX~AK5*R*5~AK9*R*1*1*0~SE*8*0002~"
+  - description: "Reconcile against what you sent"
+    method: GET
+    url: "https://fluentedi.com/v1/edi/acknowledge?input=ST*997*0003~AK1*SH*5~AK2*856*0001~AK5*A~AK9*P*2*2*1~SE*6*0003~&sent=%5B%220001%22%2C%220002%22%5D"
+- tool: gs1.checkdigit
+  endpoint: https://fluentedi.com/v1/gs1/checkdigit
+  requests:
+  - description: "Validate a UPC-12"
+    method: GET
+    url: "https://fluentedi.com/v1/gs1/checkdigit?code=036000291452"
+  - description: "Compute the check digit for an SSCC payload"
+    method: GET
+    url: "https://fluentedi.com/v1/gs1/checkdigit?code=00614141123456789"
+  - description: "Catch a code mangled by a spreadsheet"
+    method: GET
+    url: "https://fluentedi.com/v1/gs1/checkdigit?code=614141123456789&length=18"
+- tool: id.validate
+  endpoint: https://fluentedi.com/v1/id/validate
+  requests:
+  - description: "Validate an IBAN"
+    method: GET
+    url: "https://fluentedi.com/v1/id/validate?value=GB82%20WEST%201234%205698%207654%2032"
+  - description: "Check a card number"
+    method: GET
+    url: "https://fluentedi.com/v1/id/validate?value=4242424242424242&scheme=card"
+  - description: "Validate an Indian GSTIN"
+    method: GET
+    url: "https://fluentedi.com/v1/id/validate?value=27AAPFU0939F1ZV"
+  - description: "A LEI, where a pass means less than it appears"
+    method: GET
+    url: "https://fluentedi.com/v1/id/validate?value=7LTWFZYICNSX8D621K86"
+- tool: tool.search
+  endpoint: https://fluentedi.com/v1/tool/search
+  requests:
+  - description: "Find a tool by describing the job"
+    method: GET
+    url: "https://fluentedi.com/v1/tool/search?q=check%20if%20a%20date%20falls%20inside%20a%20shipping%20window"
+  - description: "Find everything about broken JSON"
+    method: GET
+    url: "https://fluentedi.com/v1/tool/search?q=fix%20malformed%20json&limit=3&detail=true"
+  - description: "Barcode check digits"
+    method: GET
+    url: "https://fluentedi.com/v1/tool/search?q=validate%20barcode%20check%20digit"
+- tool: tool.describe
+  endpoint: https://fluentedi.com/v1/tool/describe
+  requests:
+  - description: "Learn how to call time.window"
+    method: GET
+    url: "https://fluentedi.com/v1/tool/describe?name=time.window"
+- tool: tool.call
+  endpoint: https://fluentedi.com/v1/tool/call
+  requests:
+  - description: "Call a tool that is not in the default listing"
+    method: GET
+    url: "https://fluentedi.com/v1/tool/call?tool=gs1.checkdigit&args=%7B%22code%22%3A%22036000291452%22%7D"
+  - description: "Convert units"
+    method: GET
+    url: "https://fluentedi.com/v1/tool/call?tool=unit.convert&args=%7B%22value%22%3A100%2C%22from%22%3A%22km%22%2C%22to%22%3A%22mi%22%7D"
+verification:
+  method: replayed live
+  date: '2026-09-03'
+  sampled: 11
+  passed: 11
+  criterion: HTTP 200 with a body parsing as JSON whose `ok` field is true
+  sample:
+  - {tool: time.now, status: 200, ok: true}
+  - {tool: json.query, status: 200, ok: true}
+  - {tool: csv.convert, status: 200, ok: true}
+  - {tool: text.diff, status: 200, ok: true}
+  - {tool: jwt.decode, status: 200, ok: true}
+  - {tool: url.parse, status: 200, ok: true}
+  - {tool: edi.parse, status: 200, ok: true}
+  - {tool: edi.validate, status: 200, ok: true}
+  - {tool: edi.build, status: 200, ok: true}
+  - {tool: gs1.checkdigit, status: 200, ok: true}
+  - {tool: tool.describe, status: 200, ok: true}
+  note: >-
+    A sample of eleven, one from each tool family including all four EDI tools, was executed against
+    the live service. All eleven returned 200 with ok true, so the published examples are current
+    rather than aspirational. The remaining 117 were not replayed.
+in_spec_examples:
+  note: >-
+    The served OpenAPI also carries in-contract examples - 78 `examples` arrays across parameter and
+    request-body schemas - so an agent reading only openapi.json still gets concrete values.
+sanitization_note: >-
+  Four example values in this file and two in openapi/fluentedi-openapi.json were rewritten to
+  REDACTED_* placeholders by 0-working/sanitize-secrets.py. They are the provider's own deliberately
+  fake demonstration tokens for the secret.scan and url.scan tools - a Stripe-shaped key and a
+  GitHub-shaped token, published so a caller can see the scanner fire. They are replaced here only
+  because GitHub push-protection blocks on the pattern shape regardless of whether a token is real.
+  Those specific example URLs will therefore not reproduce the documented finding verbatim; fetch
+  them from https://fluentedi.com/llms-full.txt if you need the originals.

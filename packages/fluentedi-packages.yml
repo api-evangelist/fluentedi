@@ -1,0 +1,58 @@
+generated: '2026-09-03'
+method: searched
+source: registry.npmjs.org, pypi.org, rubygems.org, crates.io, api.nuget.org, packagist.org, proxy.golang.org, https://fluentedi.com/llms.txt
+package_count: 0
+official_sdk_count: 0
+note: >-
+  A recorded absence, not an unchecked one - and a deliberate one on the provider's side. The
+  product tagline on every surface is "No key, no signup, no SDK", and llms.txt tells callers to use
+  curl or an MCP client rather than a library. Nine registries were queried and none carries a
+  first-party FluentEDI client. No SDKs pointer is emitted, because there is no SDK to point at.
+registries_searched:
+- registry: npm
+  query: fluentedi
+  result: 404 on registry.npmjs.org/fluentedi; the npm search API returns zero objects for "fluentedi"; the scoped name @fluentedi/mcp is also 404.
+  version: null
+  published: null
+- registry: pypi
+  query: fluentedi
+  result: 404 on pypi.org/pypi/fluentedi/json
+  version: null
+  published: null
+- registry: rubygems
+  query: fluentedi
+  result: 404
+  version: null
+  published: null
+- registry: crates.io
+  query: fluentedi
+  result: 404
+  version: null
+  published: null
+- registry: nuget
+  query: fluentedi
+  result: 404
+  version: null
+  published: null
+- registry: packagist
+  query: fluentedi/fluentedi
+  result: 404
+  version: null
+  published: null
+- registry: go
+  query: github.com/mastermanas805/fluentedi-mcp
+  result: >-
+    proxy.golang.org answers 200 with pseudo-version v0.0.0-20260823044200-cd65e0ae28ac. This is the
+    Go proxy synthesising a version from any public git repo, not a published module - the
+    repository holds only README.md, glama.json and server.json, no Go source and no go.mod.
+    Recorded so a later run does not mistake it for a package.
+  version: null
+  published: '2026-08-23'
+distribution:
+  how_it_is_consumed:
+  - transport: HTTP
+    detail: GET or POST https://fluentedi.com/v1/{tool} - no client library needed, and the 400 body carries the schema and working example URLs.
+  - transport: MCP
+    detail: 'Remote streamable-HTTP server at https://fluentedi.com/mcp. Install line published by the provider: claude mcp add --transport http fluentedi https://fluentedi.com/mcp'
+  - transport: batch
+    detail: POST https://fluentedi.com/v1/batch, up to 20 calls per request.

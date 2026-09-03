@@ -1,0 +1,102 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the FluentEDI OpenAPI
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-03'
+  method: generated
+  source: openapi/fluentedi-openapi.json
+  extends: https://fluentedi.com/openapi.json
+  note: >-
+    Non-destructive additions only. Nothing in the provider's served spec is altered or removed;
+    every action below adds information this catalog established by probing (the MCP binding, the
+    error envelope, the agent-facing descriptors) or that the provider publishes elsewhere but did
+    not put in the contract (external docs, contact, licence URL, explicit no-auth security).
+actions:
+- target: $.info
+  description: Add the provider's own agent reference as externalDocs and record the licence identifier's home.
+  update:
+    contact:
+      name: FluentEDI
+      url: https://fluentedi.com/
+    x-agent-reference: https://fluentedi.com/llms-full.txt
+    x-privacy: https://fluentedi.com/privacy
+- target: $
+  description: The served spec has no externalDocs; point agents at the llms.txt the api-catalog declares as service-doc.
+  update:
+    externalDocs:
+      description: FluentEDI agent reference - every tool, parameter and worked example
+      url: https://fluentedi.com/llms.txt
+- target: $
+  description: Make the absence of authentication explicit in the contract rather than implicit in the absence of securitySchemes.
+  update:
+    security: []
+    x-authentication:
+      required: false
+      type: none
+      declared_at:
+      - https://fluentedi.com/.well-known/ai
+      - https://fluentedi.com/.well-known/ai-plugin.json
+      - https://fluentedi.com/.well-known/mcp.json
+- target: $
+  description: Record the companion agent surfaces the contract does not mention.
+  update:
+    x-surfaces:
+      mcp:
+        endpoint: https://fluentedi.com/mcp
+        transport: streamable-http
+        server_card: https://fluentedi.com/.well-known/mcp/server-card.json
+        registry: com.fluentedi/tools
+        tools_listed: 19
+      tool_registry: https://fluentedi.com/v1/tools
+      api_catalog: https://fluentedi.com/.well-known/api-catalog
+      health: https://fluentedi.com/health
+      recipes: https://fluentedi.com/recipes.json
+- target: $
+  description: Document the response and error envelope shared by all 99 operations, which the spec describes only per-operation.
+  update:
+    x-response-envelope:
+      success: '{ "ok": true, "tool": "<name>", "result": { ... } }'
+      failure: '{ "ok": false, "tool": "<name>", "error": { "code", "message", "details" }, "parameters": <JSON Schema>, "working_examples": [...], "documentation": "..." }'
+      error_codes: [invalid_input, unknown_tool, too_many_calls, method_not_allowed]
+      note: A failed call returns the tool's full parameter schema and working example URLs, so recovery needs no documentation fetch.
+    x-idempotency:
+      idempotent: true
+      mechanism: intrinsic - every operation is read-only and stateless
+    x-reversibility:
+      applicable: false
+      reason: no write surface
+- target: $.paths['/v1/edi/build'].post
+  description: Name the domain standard this operation implements, in the contract.
+  update:
+    x-domain-standard:
+      standard: ANSI ASC X12
+      transaction_sets: ['856', '850']
+      envelope_elements: [ISA05, ISA06, ISA07, ISA08, ISA13, ISA15, GS06, ST02, SE01, CTT01, GE01, IEA01]
+- target: $.paths['/v1/edi/acknowledge'].get
+  description: Name the domain standard this operation implements.
+  update:
+    x-domain-standard:
+      standard: ANSI ASC X12
+      transaction_sets: ['997', '999']
+      elements: [AK1, AK2, AK3, AK4, AK5, AK9, ST02]
+- target: $.paths['/v1/gs1/checkdigit'].get
+  description: Name the identification standard.
+  update:
+    x-domain-standard:
+      standard: GS1 mod-10 check digit
+      key_types: [SSCC-18, GTIN-14, GTIN-13, GTIN-12, GTIN-8, UPC]
+- target: $.paths['/v1/json/canonical'].get
+  description: Name the canonicalization standard.
+  update:
+    x-domain-standard:
+      standard: RFC 8785 JSON Canonicalization Scheme
+      digests: [SHA-256, CIDv1]
+- target: $.paths['/v1/batch'].post
+  description: Record the batch ceiling and its enforcement, observed live.
+  update:
+    x-limits:
+      max_calls: 20
+      on_exceeded:
+        status: 400
+        code: too_many_calls

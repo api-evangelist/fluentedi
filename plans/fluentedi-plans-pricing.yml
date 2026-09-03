@@ -1,0 +1,41 @@
+generated: '2026-09-03'
+method: searched
+source: https://fluentedi.com/llms.txt
+docs: https://fluentedi.com/.well-known/ai
+plan_count: 1
+currency: USD
+model: free
+note: >-
+  There is no pricing page - https://fluentedi.com/pricing returns 404 - because there is nothing to
+  price. The provider states the commercial terms in machine-readable form instead: llms.txt says
+  "Free and unauthenticated, with no rate limit and no paid tier", and /.well-known/ai declares
+  "cost": "free". Recorded as a single published free tier rather than plan_count 0, because the
+  terms are genuinely published; they are simply published as a sentence in the agent reference
+  rather than as a pricing table.
+plans:
+- name: Free
+  price: 0
+  currency: USD
+  billing_period: none
+  signup_required: false
+  authentication_required: false
+  included_quota: unlimited - no published call quota
+  overage: none
+  limits:
+    rate_limit: none published
+    batch_calls_per_request: 20
+    document_size_doc_extract: 10 MB
+  features:
+  - All 49 tools over REST, batch and MCP
+  - No account, key or signup
+  - Read-only and idempotent, nothing stored
+  source: https://fluentedi.com/llms.txt
+paid_tiers: []
+enterprise_contact: null
+probes:
+- url: https://fluentedi.com/pricing
+  status: 404
+- url: https://fluentedi.com/llms.txt
+  status: 200
+- url: https://fluentedi.com/.well-known/ai
+  status: 200

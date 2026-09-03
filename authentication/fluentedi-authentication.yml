@@ -1,0 +1,54 @@
+generated: '2026-09-03'
+method: searched
+source: https://fluentedi.com/.well-known/ai
+docs: https://fluentedi.com/llms.txt
+summary: >-
+  FluentEDI publishes no authentication at all, and says so in four separate machine-readable places
+  rather than leaving it to be inferred. There is no account, no API key, no OAuth, no bearer token
+  and no signup on any surface - REST, batch or MCP.
+model: none
+schemes: []
+openapi:
+  file: openapi/fluentedi-openapi.json
+  components_securitySchemes: []
+  security: absent
+  note: >-
+    The served OpenAPI 3.1 declares no securitySchemes and applies no security requirement to any of
+    its 99 operations. For most providers that would be a thin spec; here it is an accurate
+    description of the product, corroborated by the declarations below.
+declarations:
+- url: https://fluentedi.com/.well-known/ai
+  status: 200
+  says: 'authentication: {required: false, type: none}'
+- url: https://fluentedi.com/.well-known/ai-plugin.json
+  status: 200
+  says: 'auth: {type: none}'
+- url: https://fluentedi.com/.well-known/mcp.json
+  status: 200
+  says: 'authentication: {type: none}'
+- url: https://fluentedi.com/.well-known/mcp/server-card.json
+  status: 200
+  says: 'authentication: {type: none}'
+- url: https://fluentedi.com/v1/tools
+  status: 200
+  says: 'authentication: "none"'
+verification:
+  anonymous_rest_call:
+    url: https://fluentedi.com/v1/time/now?timezone=UTC
+    status: 200
+    note: Returned a tool result with no credential of any kind.
+  anonymous_mcp_tools_list:
+    url: https://fluentedi.com/mcp
+    status: 200
+    note: tools/list returned 19 tools with full inputSchemas and no OAuth challenge.
+  oauth_metadata:
+    '/.well-known/oauth-authorization-server': 404
+    '/.well-known/oauth-protected-resource': 404
+    '/.well-known/openid-configuration': 404
+cors:
+  access-control-allow-origin: '*'
+  access-control-allow-methods: GET, POST, HEAD, OPTIONS
+  access-control-allow-headers: content-type, accept, mcp-protocol-version, mcp-session-id, authorization
+  note: Observed on a live response; browser-side agents can call the API directly.
+scopes: null
+scopes_note: No OAuth surface exists, so there is no scope model to document. scopes/ is intentionally absent.

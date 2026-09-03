@@ -1,0 +1,48 @@
+generated: '2026-09-03'
+method: probed
+source: https://fluentedi.com/.well-known/ai
+docs: https://fluentedi.com/llms.txt
+limit_count: 0
+note: >-
+  An honest zero with a reason. The provider does not merely omit rate limits - it declares their
+  absence twice in machine-readable form: /.well-known/ai carries "rate_limit": "none" and llms.txt
+  states "Free and unauthenticated, with no rate limit and no paid tier". A live response was
+  inspected and carries no X-RateLimit-*, RateLimit-* or Retry-After header, which is consistent.
+  The practical caveat for an agent: because no limit is published and no headers are returned,
+  there is also no runtime signal if the edge does throttle - the origin is behind Cloudflare, whose
+  own DDoS protection is not part of the provider's declaration. An agent should treat a 429 as
+  possible and unannounced rather than impossible.
+declared_limits: []
+response_headers:
+  ratelimit_headers_present: false
+  observed_on:
+    url: https://fluentedi.com/v1/time/now?timezone=UTC
+    status: 200
+    headers_returned:
+    - access-control-allow-origin
+    - cache-control
+    - link
+    - strict-transport-security
+    - x-content-type-options
+    - x-docs
+    - x-frame-options
+    - x-service
+    - cf-ray
+    - server
+  retry_after: not observed
+  status_on_exhaustion: not published
+structural_limits:
+- scope: per-request
+  surface: POST /v1/batch
+  limit: 20
+  unit: tool calls per batch
+  enforcement: 'HTTP 400, error code too_many_calls, message "A batch holds at most 20 calls; this one has N. Split it."'
+  verified: probed
+  source: observed live on 2026-09-03 by posting 25 calls
+- scope: per-request
+  surface: doc.extract
+  limit: 10
+  unit: MB per document
+  enforcement: documented in the tool description
+  verified: searched
+  source: https://fluentedi.com/llms-full.txt

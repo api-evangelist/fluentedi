@@ -53,6 +53,19 @@ apis:
     url: https://fluentedi.com/v1/tools
   - type: Sitemap
     url: https://fluentedi.com/sitemap.xml
+  - type: OpenAPI
+    url: openapi/fluentedi-openapi.json
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: MCPServer
+    url: mcp/fluentedi-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+  - type: Overlay
+    url: overlays/fluentedi-openapi-overlay.yaml
+image: https://fluentedi.com/favicon.svg
 maintainers:
 - FN: FluentEDI
   url: https://fluentedi.com/
@@ -61,3 +74,41 @@ x-source:
   fetched: '2026-09-03'
   note: Every property above was fetched and returned 200 before this record was written; an invented
     control path returns 404, so the host discriminates. Published to the official MCP registry as com.fluentedi/tools.
+x-enrichment:
+  date: '2026-09-03'
+  status: enriched
+  artifacts_added: 30
+  pass: local-v1
+common:
+- type: DomainSecurity
+  url: security/fluentedi-domain-security.yml
+- type: WellKnown
+  url: well-known/fluentedi-well-known.yml
+- type: Authentication
+  url: authentication/fluentedi-authentication.yml
+- type: ErrorCatalog
+  url: errors/fluentedi-problem-types.yml
+- type: Conventions
+  url: conventions/fluentedi-conventions.yml
+- type: Idempotency
+  url: conventions/fluentedi-conventions.yml
+- type: Lifecycle
+  url: lifecycle/fluentedi-lifecycle.yml
+- type: StatusPage
+  url: https://fluentedi.com/health
+- type: Conformance
+  url: conformance/fluentedi-conformance.yml
+- type: Plans
+  url: plans/fluentedi-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/fluentedi-rate-limits.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: AgenticAccess
+  url: agentic-access/fluentedi-agentic-access.yml
+- type: DeveloperPortal
+  url: https://fluentedi.com/
+- type: PrivacyPolicy
+  url: https://fluentedi.com/privacy
+- type: GitHub
+  url: https://github.com/mastermanas805/fluentedi-mcp

@@ -1,0 +1,73 @@
+generated: '2026-09-03'
+method: probed
+source: https://fluentedi.com/health
+docs: https://fluentedi.com/llms.txt
+versioning:
+  scheme: URL path major (/v1) plus a semantic service version
+  current_version: 1.1.0
+  path_version: v1
+  published_at:
+  - https://fluentedi.com/health
+  - https://fluentedi.com/.well-known/mcp.json
+  - 'openapi.json info.version'
+  - 'x-service response header'
+  prior_versions_published: []
+  note: >-
+    1.0.0 and 1.1.0 both appear in the official MCP Registry (published 2026-08-23 and 2026-08-29),
+    which is the only dated version history the provider exposes.
+status_page:
+  type: machine-readable health endpoint
+  url: https://fluentedi.com/health
+  status: 200
+  declared_by: https://fluentedi.com/.well-known/api-catalog
+  declared_as: 'linkset[0].status[0] - "Health check"'
+  fields: [ok, status, tools, version, commit, deployed_at, time]
+  observed:
+    ok: true
+    status: healthy
+    tools: 49
+    version: 1.1.0
+    commit: dea67676be5352139cc98c7dbdf8ca728460eb2d
+    deployed_at: '2026-08-29T10:10:43.716Z'
+  note: >-
+    This is a JSON health endpoint, not a hosted incident-history page - there is no
+    status.fluentedi.com and no historical uptime record. It is counted as the status surface
+    because the provider declares it as such in its own RFC 9727 api-catalog under rel "status",
+    and because it exposes more than liveness: the running version, the deployed git commit and the
+    deploy timestamp, which is what an agent actually needs to tell whether the service it is
+    calling is the one it read the contract for.
+deprecation_policy:
+  published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No deprecation or sunset policy is published, no operation in the OpenAPI carries
+    "deprecated": true, and no Deprecation or Sunset response header was observed. Nothing has been
+    deprecated yet - the service is one major version old - but the policy for what happens when
+    something is is not stated anywhere. This is the clearest documentation gap on an otherwise
+    unusually complete agent-facing surface, and it is the one that matters most to an agent that
+    hardcodes a tool name.
+deprecated_operations: []
+sla:
+  published: false
+  note: No uptime commitment, support response time or service-level agreement is published. The service is free and unauthenticated, and makes no availability promise.
+changelog:
+  published: false
+  note: >-
+    /changelog returns 404 and no dated release notes were found. The MCP Registry version history
+    and the commit + deployed_at fields in /health are the only change signal.
+support:
+  channel: >-
+    /privacy states "Open an issue via the operator, or see https://fluentedi.com/llms.txt". The
+    operator's public repository is https://github.com/mastermanas805/fluentedi-mcp; no support
+    email, forum or help centre is published.
+probes:
+- url: https://fluentedi.com/health
+  status: 200
+- url: https://fluentedi.com/status
+  status: 404
+- url: https://fluentedi.com/changelog
+  status: 404
+- url: https://fluentedi.com/zzz-control-path
+  status: 404

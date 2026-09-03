@@ -1,0 +1,40 @@
+{
+  "name": "FluentEDI",
+  "description": "A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions, resolving DNS, looking up WHOIS/RDAP registration for any domain or IP, validating email addresses down to their MX records, checking whether a URL is still live, and extracting the text of PDF, Word, Excel and OpenDocument files as markdown. Every tool is one stateless GET or POST returning JSON, and the same tools are exposed over the Model Context Protocol at /mcp. Coverage runs deepest in retail EDI — X12 850, 856, 810, 855 and 997 parsing and validation, and GS1 check digits — which no other free, unauthenticated service offers agents.",
+  "identity": {
+    "domain": "fluentedi.com",
+    "operator": "FluentEDI"
+  },
+  "authentication": {
+    "required": false,
+    "type": "none"
+  },
+  "actions": {
+    "rest": "https://fluentedi.com/v1/{tool}",
+    "batch": "https://fluentedi.com/v1/batch",
+    "mcp": "https://fluentedi.com/mcp",
+    "discover": "https://fluentedi.com/v1/tools",
+    "search": "https://fluentedi.com/v1/tool/search?q={description}"
+  },
+  "documentation": {
+    "agents": "https://fluentedi.com/llms-full.txt",
+    "openapi": "https://fluentedi.com/openapi.json",
+    "worked_solutions": "https://fluentedi.com/recipes"
+  },
+  "operational": {
+    "tool_count": 49,
+    "rate_limit": "none",
+    "cost": "free",
+    "side_effects": "none — every tool is read-only and idempotent",
+    "statefulness": "stateless; request bodies are processed in memory and discarded",
+    "network_tools": [
+      "doc.extract",
+      "money.convert",
+      "http.check",
+      "http.assert",
+      "dns.lookup",
+      "domain.lookup",
+      "email.validate"
+    ]
+  }
+}

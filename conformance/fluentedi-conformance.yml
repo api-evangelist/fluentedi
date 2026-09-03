@@ -1,0 +1,137 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/fluentedi-openapi.json
+searched: https://fluentedi.com/llms-full.txt
+note: >-
+  Every entry below cites a location in the served contract or a live probe, not a marketing claim.
+  This provider is unusual in that the standards it implements are the product: the tools exist to
+  compute conformance for other systems, so a standard named in a tool description is also a
+  standard the tool implements.
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence:
+    location: 'openapi.json $.openapi = "3.1.0"'
+    url: https://fluentedi.com/openapi.json
+    detail: 50 paths, 99 operations, every operation carries operationId, summary, description, tags and a 200; 98 also declare a 400.
+- id: mcp
+  conforms: true
+  version_range: 2024-11-05 through 2026-07-28
+  evidence:
+    location: 'https://fluentedi.com/.well-known/mcp/server-card.json remotes[0] + supportedProtocolVersions'
+    probe: 'POST /mcp tools/list -> HTTP 200, 19 tools with inputSchema'
+    detail: Published to the official MCP Registry as com.fluentedi/tools, which requires control of the fluentedi.com namespace.
+- id: rfc9727-api-catalog
+  conforms: true
+  evidence:
+    location: https://fluentedi.com/.well-known/api-catalog
+    detail: A linkset with anchor, service-desc, service-doc, service-meta and status, and an accompanying Link header with rel="api-catalog" on every response.
+- id: llms-txt
+  conforms: true
+  evidence:
+    location: https://fluentedi.com/llms.txt
+    detail: Served at both /llms.txt and /.well-known/llms.txt, with an expanded /llms-full.txt referenced from the api-catalog as service-doc.
+- id: content-signal
+  conforms: true
+  evidence:
+    location: https://fluentedi.com/robots.txt
+    detail: 'Content-Signal: search=yes, ai-input=yes, ai-train=yes, followed by explicit Allow rules for 24 named AI crawlers.'
+- id: rfc9457-problem-details
+  conforms: false
+  evidence:
+    detail: Errors use a vendor envelope keyed on `ok`, served as application/json, not application/problem+json. See errors/fluentedi-problem-types.yml.
+- id: oauth2
+  conforms: false
+  evidence:
+    probe: '/.well-known/oauth-authorization-server -> 404, /.well-known/oauth-protected-resource -> 404'
+    detail: No authentication of any kind; not an omission, a declared property of the service.
+- id: oidc
+  conforms: false
+  evidence:
+    probe: '/.well-known/openid-configuration -> 404'
+- id: rfc9116-security-txt
+  conforms: false
+  evidence:
+    probe: '/.well-known/security.txt -> 404'
+domain_standards:
+- id: x12
+  name: ANSI ASC X12 EDI
+  conforms: true
+  role: implements
+  transaction_sets: ['850', '855', '810', '856', '997', '999']
+  evidence:
+  - location: 'openapi.json $.paths["/v1/edi/build"].post.requestBody.content["application/json"].schema.properties.document.enum = ["856","850"]'
+    detail: The contract enumerates the X12 transaction sets it emits as a schema enum, not as prose.
+  - location: 'openapi.json $.paths["/v1/edi/acknowledge"].get.parameters[0].description = "Raw 997 or 999 acknowledgment text"'
+    detail: The 997/999 Functional Acknowledgment is a first-class input type in the contract.
+  - location: 'openapi.json $.paths["/v1/edi/acknowledge"].get.parameters[1].description names ST02 control numbers'
+  - location: 'openapi.json $.paths["/v1/edi/validate"].get.parameters[1].description = HL level codes ["S","O","P","I"] for a pack-level ASN'
+    detail: The 856 HL hierarchy level codes appear as documented parameter values.
+  - location: 'openapi.json $.paths["/v1/edi/build"].post description and requestBody name ISA05, ISA06, ISA07, ISA08, ISA13, ISA15, GS06, ST02, SE01, CTT01, GE01, IEA01'
+    detail: >-
+      Interchange and functional-group envelope elements are named as individual request parameters
+      with their X12 element identifiers and maxLengths (sender_id maxLength 15 = ISA06, qualifiers
+      maxLength 2 = ISA05/ISA07), which is a contract-level X12 signature rather than a claim.
+  note: >-
+    The distinction this check draws applies literally here: a trading partner who already speaks
+    X12 850/856/997 integrates against these operations with no bespoke connector, because the
+    contract speaks in ISA/GS/ST/HL/SE terms rather than in an invented vocabulary.
+- id: gs1
+  name: GS1 identification keys and mod-10 check digit
+  conforms: true
+  role: implements
+  key_types: [SSCC-18, GTIN-14, GTIN-13, GTIN-12, GTIN-8, UPC]
+  evidence:
+  - location: 'openapi.json $.paths["/v1/gs1/checkdigit"].get.parameters[1].description = "Expected total length (8, 12, 13, 14 or 18)"'
+    detail: The GS1 key lengths are enumerated in the contract; the worked example 00614141123456789 is an SSCC-18 payload.
+  - location: 'openapi.json $.paths["/v1/id/validate"].get.parameters[1].schema.enum includes gtin, ean8, ean13, upce'
+- id: iso-13616-iban
+  name: ISO 13616 IBAN (and companion identifier schemes)
+  conforms: true
+  role: implements
+  evidence:
+  - location: 'openapi.json $.paths["/v1/id/validate"].get.parameters[1].schema.enum = [auto, iban, card, luhn, isbn, isbn10, isbn13, issn, isin, cusip, lei, aba, imei, orcid, isni, ean8, ean13, gtin, upce, vin, gstin, pan, ifsc, bic, doi, verhoeff]'
+    detail: >-
+      26 identifier schemes declared as a schema enum, including ISO 13616 (IBAN), ISO 6166 (ISIN),
+      ISO 17442 (LEI), ISO 9362 (BIC), ISO 3297 (ISSN), ISO 2108 (ISBN), ISO 3779 (VIN) and ORCID.
+- id: rfc8785-jcs
+  name: RFC 8785 JSON Canonicalization Scheme
+  conforms: true
+  role: implements
+  evidence:
+  - location: 'openapi.json $.paths["/v1/json/canonical"] - "Canonicalize JSON (RFC 8785) and content-address it with SHA-256 and a CIDv1"'
+- id: rfc6902-json-patch
+  name: RFC 6902 JSON Patch operation shape
+  conforms: partial
+  role: implements
+  evidence:
+  - location: 'openapi.json $.paths["/v1/json/diff"] summary - "Structural difference between two JSON documents, as RFC 6902-style operations"'
+    detail: The provider says "RFC 6902-style", so this is recorded as partial rather than conformant on the provider's own wording.
+- id: jsonpath
+  name: JSONPath
+  conforms: true
+  role: implements
+  evidence:
+  - location: 'openapi.json $.paths["/v1/json/query"].get.parameters[1] - JSONPath expression, examples ["$.items[*].id"]'
+- id: iana-tzdb
+  name: IANA time zone database identifiers
+  conforms: true
+  role: implements
+  evidence:
+  - location: 'openapi.json $.paths["/v1/time/now"] parameter timezone - "IANA timezone identifier"'
+  - probe: 'GET /v1/time/now?timezone=Not/AZone -> 400 invalid_input, "Use an IANA identifier"'
+- id: json-schema
+  name: JSON Schema
+  conforms: true
+  role: implements
+  evidence:
+  - location: 'openapi.json $.paths["/v1/json/schema"] - "Infer a JSON Schema from an example document"'
+  - detail: Every 400 error body returns the tool''s JSON Schema parameter block inline.
+certifications: []
+compliance_programs: []
+compliance_note: >-
+  No SOC 2, ISO 27001, PCI DSS, HIPAA or FedRAMP attestation is published, and no trust centre
+  exists. That is coherent with the service rather than a gap: there is no account, no stored
+  content and no customer data - /privacy states nothing sent is stored, logged as content, or used
+  for training - so there is no processing relationship for a certification to cover. No Compliance
+  pointer is emitted, because none is earned.

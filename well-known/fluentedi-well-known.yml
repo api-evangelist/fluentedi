@@ -1,0 +1,57 @@
+generated: '2026-09-03'
+method: probed
+source: live GET of each named /.well-known/ path on fluentedi.com
+note: >-
+  Probed the named path list (never a glob). A control path (/zzz-control-path) returns 404, so the
+  host discriminates and a 200 here is a real document rather than an SPA catch-all. Every 200 below
+  was inspected and parses as JSON or text, not an HTML shell.
+hosts:
+- host: fluentedi.com
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    file: fluentedi-api-catalog.json
+    format: RFC 9727 linkset
+    note: service-desc -> openapi.json, service-doc -> llms-full.txt, service-meta -> /v1/tools + MCP server card, status -> /health
+  - path: /.well-known/ai
+    status: 200
+    file: fluentedi-ai.json
+    note: Provider-authored agent descriptor - identity, authentication (none), action endpoints, tool_count, rate_limit, side effects.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    file: fluentedi-ai-plugin.json
+    note: Classic ai-plugin manifest pointing at the OpenAPI, auth type none.
+  - path: /.well-known/ai-catalog.json
+    status: 200
+    file: fluentedi-ai-catalog.json
+    note: AIR catalog specVersion 1.0, four entries (MCP server card, REST OpenAPI, agent reference, tool registry).
+  - path: /.well-known/mcp.json
+    status: 200
+    file: fluentedi-mcp.json
+    note: MCP descriptor - endpoint https://fluentedi.com/mcp, transport streamable-http, auth none.
+  - path: /.well-known/mcp/server-card.json
+    status: 200
+    file: fluentedi-mcp-server-card.json
+    note: MCP server card, name com.fluentedi/tools, supportedProtocolVersions 2024-11-05 through 2026-07-28.
+  - path: /.well-known/llms.txt
+    status: 200
+    file: null
+    note: Byte-identical to https://fluentedi.com/llms.txt, which is saved at llms/fluentedi-llms.txt; not duplicated here.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/dnt-policy.txt
+    status: 404
+control:
+  path: /zzz-control-path
+  status: 404
+  note: Negative control - an invented path 404s, so the 200s above are not a catch-all.

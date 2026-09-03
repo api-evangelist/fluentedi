@@ -1,0 +1,30 @@
+generated: '2026-09-03'
+method: generated
+source: openapi/fluentedi-openapi.json, https://fluentedi.com/recipes.json
+note: >-
+  Packaged Agent Skills for the FluentEDI Tools API. Each one is grounded in operationIds grepped
+  from the served OpenAPI - no operation, parameter or default in these files was invented - and
+  mirrors one of the worked solutions the provider publishes at /recipes. The provider ships no
+  skills or AGENTS.md of its own; these are authored by API Evangelist.
+provider_published_skills: none found
+skills:
+- name: fluentedi-build-856-asn
+  file: fluentedi-build-856-asn.md
+  summary: Build a standards-valid X12 856 ASN, verify SSCC-18 carton labels, and validate the envelope and HL hierarchy before it reaches the retailer.
+  operations: [gs1_checkdigit_get, edi_build_post, edi_validate_post, edi_parse_post]
+- name: fluentedi-decode-997-acknowledgment
+  file: fluentedi-decode-997-acknowledgment.md
+  summary: Decode an X12 997/999 into plain language and reconcile it against the ST02 control numbers you sent, so unacknowledged documents surface.
+  operations: [edi_acknowledge_post, edi_acknowledge_get, edi_parse_post]
+- name: fluentedi-delivery-window-arithmetic
+  file: fluentedi-delivery-window-arithmetic.md
+  summary: Establish the real current time and test whether an instant falls inside a delivery or ship window, across timezones, with the miss distance.
+  operations: [time_now_get, time_convert_get, time_add_get, time_diff_get, time_window_get, cron_next_get, time_zones_get]
+- name: fluentedi-repair-and-hash-json
+  file: fluentedi-repair-and-hash-json.md
+  summary: Repair malformed model output, canonicalize under RFC 8785, content-address with SHA-256/CIDv1, and detect contract drift against live payloads.
+  operations: [json_repair_post, json_canonical_post, json_query_get, json_diff_post, json_schema_post, api_diff_post]
+- name: fluentedi-scan-agent-output-for-leaks
+  file: fluentedi-scan-agent-output-for-leaks.md
+  summary: Scan text and URLs for credentials and personal data before an agent pastes logs into a model, ticket or chat, and get a redacted version back.
+  operations: [secret_scan_post, url_scan_get, text_unicode_post, shell_quote_get]

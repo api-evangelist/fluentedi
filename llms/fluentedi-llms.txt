@@ -1,0 +1,144 @@
+# FluentEDI
+
+> Deterministic tools for AI agents. No key, no signup, no SDK.
+
+A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions, resolving DNS, looking up WHOIS/RDAP registration for any domain or IP, validating email addresses down to their MX records, checking whether a URL is still live, and extracting the text of PDF, Word, Excel and OpenDocument files as markdown. Every tool is one stateless GET or POST returning JSON, and the same tools are exposed over the Model Context Protocol at /mcp. Coverage runs deepest in retail EDI — X12 850, 856, 810, 855 and 997 parsing and validation, and GS1 check digits — which no other free, unauthenticated service offers agents.
+
+## How to call it
+
+Every tool is one stateless request. No API key, no account, no rate-limit headers to negotiate.
+
+    GET  https://fluentedi.com/v1/{tool}?param=value
+    POST https://fluentedi.com/v1/{tool}          (JSON body)
+
+Responses are `{ "ok": true, "tool": "...", "result": {...} }`. Errors are `{ "ok": false, "error": {...} }`
+and always include the tool's full parameter schema plus working examples, so a failed call tells you
+exactly how to make the next one succeed.
+
+Run up to 20 tools in one round trip by POSTing to https://fluentedi.com/v1/batch with
+`{"calls":[{"tool":"time.now","args":{}},{"tool":"hash","args":{"input":"x"}}]}`.
+
+MCP clients: add https://fluentedi.com/mcp as a streamable-HTTP server. Same tools, same behaviour.
+
+## Tools
+
+### Time, dates and windows
+
+- [time.now](https://fluentedi.com/v1/tools/time.now): Current date and time in any IANA timezone.
+- [time.convert](https://fluentedi.com/v1/tools/time.convert): Convert a timestamp between timezones.
+- [time.add](https://fluentedi.com/v1/tools/time.add): Add or subtract a duration from a date, calendar-aware.
+- [time.diff](https://fluentedi.com/v1/tools/time.diff): Duration between two dates, in every unit.
+- [time.window](https://fluentedi.com/v1/tools/time.window): Test whether an instant falls inside a time window, and by how much it misses.
+- [time.zones](https://fluentedi.com/v1/tools/time.zones): List or search IANA timezone identifiers with current offsets.
+
+### Scheduling
+
+- [cron.next](https://fluentedi.com/v1/tools/cron.next): Validate a cron expression, explain it in English, and list its next run times.
+
+### JSON and tabular data
+
+- [json.query](https://fluentedi.com/v1/tools/json.query): Extract values from a JSON document with a JSONPath expression.
+- [json.repair](https://fluentedi.com/v1/tools/json.repair): Repair malformed JSON and pinpoint the exact line and column when it cannot be repaired.
+- [json.canonical](https://fluentedi.com/v1/tools/json.canonical): Canonicalize JSON (RFC 8785) and content-address it with SHA-256 and a CIDv1.
+- [json.diff](https://fluentedi.com/v1/tools/json.diff): Structural difference between two JSON documents, as RFC 6902-style operations.
+- [json.schema](https://fluentedi.com/v1/tools/json.schema): Infer a JSON Schema from an example document.
+- [api.diff](https://fluentedi.com/v1/tools/api.diff): Diff an API's declared contract against payloads it actually returned; classify the drift.
+- [csv.convert](https://fluentedi.com/v1/tools/csv.convert): Convert between CSV and JSON with correct quote handling.
+
+### Documents (PDF, Word, Excel)
+
+- [doc.extract](https://fluentedi.com/v1/tools/doc.extract): Extract the text of a PDF, Word, Excel or other document as markdown or plain text.
+
+### Text
+
+- [text.stats](https://fluentedi.com/v1/tools/text.stats): Count characters, words, bytes, sentences and estimated tokens; score readability.
+- [text.case](https://fluentedi.com/v1/tools/text.case): Convert a string to camelCase, snake_case, kebab-case, Title Case, a URL slug and more.
+- [text.diff](https://fluentedi.com/v1/tools/text.diff): Unified diff between two texts, with change statistics and a similarity score.
+- [text.offset](https://fluentedi.com/v1/tools/text.offset): Convert between text positions: byte offset, UTF-16 index, code point, grapheme, and line/column.
+- [text.unicode](https://fluentedi.com/v1/tools/text.unicode): Find invisible characters, bidi overrides and script confusables hiding in text.
+- [shell.quote](https://fluentedi.com/v1/tools/shell.quote): Quote a value safely for a shell, and report what would have gone wrong unquoted.
+- [regex.test](https://fluentedi.com/v1/tools/regex.test): Test a regular expression against text and inspect every match and capture group.
+
+### Hashing, signatures, encoding and identifiers
+
+- [hash](https://fluentedi.com/v1/tools/hash): Hash or HMAC-sign text with MD5, SHA-1, SHA-256/384/512 or CRC32.
+- [crypto.verify](https://fluentedi.com/v1/tools/crypto.verify): Verify an Ed25519, ECDSA, RSA or HMAC signature against a message and public key.
+- [jwt.decode](https://fluentedi.com/v1/tools/jwt.decode): Decode a JWT and check its expiry, optionally verifying an HMAC signature.
+- [encode](https://fluentedi.com/v1/tools/encode): Convert text between base64, base64url, hex, URL and HTML encodings.
+- [id.generate](https://fluentedi.com/v1/tools/id.generate): Generate UUIDv4, UUIDv7, ULID, nanoid or short random IDs.
+
+### Calculation and conversion
+
+- [math.eval](https://fluentedi.com/v1/tools/math.eval): Evaluate a mathematical expression exactly.
+- [unit.convert](https://fluentedi.com/v1/tools/unit.convert): Convert between units of length, mass, temperature, data, time, speed, area, volume, pressure, energy and angle.
+- [color.convert](https://fluentedi.com/v1/tools/color.convert): Convert a colour between hex, RGB, HSL and OKLCh, and check WCAG contrast.
+- [money.convert](https://fluentedi.com/v1/tools/money.convert): Convert between 30 currencies at current or historical European Central Bank reference rates.
+
+### Web and network
+
+- [url.parse](https://fluentedi.com/v1/tools/url.parse): Parse, normalise or resolve a URL and break out its query parameters.
+- [url.scan](https://fluentedi.com/v1/tools/url.scan): Detect credentials, tokens and personal data leaking in a URL, and return a redacted version.
+- [secret.scan](https://fluentedi.com/v1/tools/secret.scan): Find credentials and personal data in text, and return a redacted copy safe to share.
+- [http.check](https://fluentedi.com/v1/tools/http.check): Check whether a URL is still live: status, redirect chain, and whether a citation still says what it said.
+- [http.assert](https://fluentedi.com/v1/tools/http.assert): Verify a URL actually returns what you expected — status, headers, JSON values — and return a pass/fail proof.
+- [dns.lookup](https://fluentedi.com/v1/tools/dns.lookup): Resolve DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA, CAA and more).
+- [net.inspect](https://fluentedi.com/v1/tools/net.inspect): Report the caller's IP, geolocation, network and TLS details as seen from the edge.
+- [domain.lookup](https://fluentedi.com/v1/tools/domain.lookup): WHOIS for a domain or IP: registration and expiry dates, registrar, nameservers, status — or the network that owns an address.
+- [email.validate](https://fluentedi.com/v1/tools/email.validate): Validate an email address: syntax, whether the domain can receive mail (MX), disposable and role-account detection, typo suggestions.
+
+### EDI and retail supply chain (X12)
+
+- [edi.parse](https://fluentedi.com/v1/tools/edi.parse): Parse an X12 EDI document (850, 856, 810, 855, 997 and others) into structured JSON.
+- [edi.validate](https://fluentedi.com/v1/tools/edi.validate): Check an X12 document's envelope integrity and 856 HL hierarchy for the errors that cause rejections.
+- [edi.build](https://fluentedi.com/v1/tools/edi.build): Generate a valid X12 856 ASN or 850 purchase order from JSON, with correct HL pointers and envelope counts.
+- [edi.acknowledge](https://fluentedi.com/v1/tools/edi.acknowledge): Read a 997 or 999 acknowledgment and say which documents were accepted, which were rejected, and why.
+- [gs1.checkdigit](https://fluentedi.com/v1/tools/gs1.checkdigit): Calculate or validate a GS1 mod-10 check digit for SSCC-18, GTIN-14/13/12/8 and UPC.
+- [id.validate](https://fluentedi.com/v1/tools/id.validate): Validate an identifier's checksum: IBAN, card, ISBN, ISSN, ISIN, CUSIP, LEI, routing number, IMEI, ORCID, GTIN, VIN, GSTIN and more.
+
+### Finding your way around
+
+- [tool.search](https://fluentedi.com/v1/tools/tool.search): Find the right tool for a task by describing it in plain language.
+- [tool.describe](https://fluentedi.com/v1/tools/tool.describe): Get the full parameter schema and worked examples for one tool.
+- [tool.call](https://fluentedi.com/v1/tools/tool.call): Invoke any tool by name, including ones not in the default listing.
+
+## Worked solutions
+
+Specific failures, each with a real failing input and the exact diagnostic returned for it.
+
+- [EDI 997 specification: every segment and code, with a live decoder](https://fluentedi.com/recipes/edi-997-specification): The complete AK1 through AK9 structure of a Functional Acknowledgment, every error code in every position, and an endpoint that turns one into plain language.
+- [EDI 856 specification: segment structure, the HL hierarchy, and a worked ASN](https://fluentedi.com/recipes/edi-856-specification): What an Advance Ship Notice contains, how the HL loop encodes shipment structure, which segments are mandatory, and a complete valid example you can run.
+- [EDI 850 specification: purchase order segments and a worked example](https://fluentedi.com/recipes/edi-850-specification): The structure of an X12 850 — BEG, N1 party loops, PO1 line items, DTM dates and CTT — with an endpoint that parses one into JSON.
+- [Why an 856 ASN is rejected for HL hierarchy errors](https://fluentedi.com/recipes/856-asn-rejected-hl-hierarchy): The HL loop flattens a shipment's tree into a list, and every level must name the ID its parent was actually given. Here is what breaks, and how to see it before the retailer does.
+- [Computing and validating an SSCC-18 check digit](https://fluentedi.com/recipes/sscc-18-check-digit): Every carton label in an ASN carries an SSCC-18 whose last digit is a GS1 mod-10 checksum. Here is the algorithm, and the spreadsheet behaviour that silently corrupts one.
+- [SE01 segment count does not match: what the receiver is counting](https://fluentedi.com/recipes/se01-segment-count-mismatch): A rejection for SE01 almost always means the sender counted differently from the spec. The rule is narrower than it looks.
+- [Reading a 997: what AK5, AK3 and AK4 codes actually mean](https://fluentedi.com/recipes/edi-997-rejection-codes): A Functional Acknowledgment reports its verdict as bare letters and numbers. Here is how to turn one into a sentence, and why silence is worse than rejection.
+- [The ISA header is fixed-width: 106 characters, no exceptions](https://fluentedi.com/recipes/isa-segment-must-be-106-characters): Most X12 segments are delimited. ISA is not — every element has an exact width and must be padded. One character out and the receiver's parser fails before reading anything.
+- [Repairing malformed JSON from a language model](https://fluentedi.com/recipes/llm-produced-invalid-json): Models emit JSON wrapped in prose, fenced in markdown, with trailing commas, single quotes, Python literals, or simply cut off. All of it is mechanically fixable.
+- [Why agents miss deadlines: timezone and window arithmetic](https://fluentedi.com/recipes/agent-timezone-and-deadline-errors): A language model has no clock. It also has no reliable intuition for whether an instant falls inside a window, which is how ship windows get missed with no error anywhere.
+- [Stopping credentials leaking when an agent shares logs](https://fluentedi.com/recipes/secrets-leaking-into-agent-logs): Agents paste logs, environment files and stack traces into models, tickets and chat. Anything in a URL or an env var goes with them.
+
+## Machine-readable descriptors
+
+- [OpenAPI 3.1](https://fluentedi.com/openapi.json)
+- [Tool registry as JSON](https://fluentedi.com/v1/tools)
+- [Worked solutions as JSON](https://fluentedi.com/recipes.json)
+- [MCP endpoint](https://fluentedi.com/mcp) (streamable HTTP, protocol 2025-06-18)
+- [Expanded reference](https://fluentedi.com/llms-full.txt)
+
+## Terms
+
+Free and unauthenticated, with no rate limit and no paid tier. Every tool is read-only and idempotent.
+
+Stateless: request and response bodies are processed in memory and discarded. Nothing you send is
+stored, logged as content, or used for training.
+
+What is counted, per call: the tool name, the transport (rest, mcp or batch), whether it succeeded, the
+error code if it did not, duration, the country and edge location the request arrived at, and the
+user-agent string. That is ordinary access telemetry, kept to understand which tools are worth
+maintaining. It never includes arguments, results, or anything derived from them.
+
+Two tools reach the network on your behalf: dns.lookup queries a public DNS resolver, and http.check
+fetches the URL you name. Both are stated in the tool description; every other tool is computed at the
+edge and touches nothing external.
+
+Version 1.1.0.

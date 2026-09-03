@@ -1,0 +1,28 @@
+{
+  "name": "com.fluentedi/tools",
+  "version": "1.1.0",
+  "title": "FluentEDI",
+  "description": "A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions, resolving DNS, looking up WHOIS/RDAP registration for any domain or IP, validating email addresses down to their MX records, checking whether a URL is still live, and extracting the text of PDF, Word, Excel and OpenDocument files as markdown. Every tool is one stateless GET or POST returning JSON, and the same tools are exposed over the Model Context Protocol at /mcp. Coverage runs deepest in retail EDI — X12 850, 856, 810, 855 and 997 parsing and validation, and GS1 check digits — which no other free, unauthenticated service offers agents.",
+  "websiteUrl": "https://fluentedi.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://fluentedi.com/mcp",
+      "supportedProtocolVersions": [
+        "2026-07-28",
+        "2025-11-25",
+        "2025-06-18",
+        "2025-03-26",
+        "2024-11-05"
+      ]
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "authentication": {
+    "type": "none"
+  }
+}

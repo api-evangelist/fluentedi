@@ -1,0 +1,123 @@
+generated: '2026-09-03'
+method: searched
+source: https://fluentedi.com/llms.txt
+derived_from: openapi/fluentedi-openapi.json, live response headers
+docs: https://fluentedi.com/v1/tools
+summary: >-
+  A stateless tool API with one convention repeated 99 times: every tool is a single GET or POST
+  under /v1/, takes a flat parameter object, and returns { ok, tool, result }. There are no
+  collections, no cursors, no partial updates and no long-running jobs, so most of the usual
+  cross-cutting machinery is not merely undocumented - it does not apply.
+auth:
+  style: none
+  detail: See authentication/fluentedi-authentication.yml. No key, no account, no token on any transport.
+transports:
+  rest_get: GET https://fluentedi.com/v1/{tool}?param=value
+  rest_post: POST https://fluentedi.com/v1/{tool} with a JSON body of the same parameters
+  batch: POST https://fluentedi.com/v1/batch with {"calls":[{"tool","args"},...]}, maximum 20 calls
+  mcp: https://fluentedi.com/mcp, streamable HTTP
+  note: GET and POST are exact equivalents for every tool; the OpenAPI declares both forms of all 49 tools.
+idempotency:
+  supported: true
+  mechanism: intrinsic
+  header: null
+  detail: >-
+    There is no Idempotency-Key header because there is nothing to deduplicate. The provider states
+    plainly in llms.txt that "every tool is read-only and idempotent", and .well-known/ai declares
+    "side_effects": "none - every tool is read-only and idempotent" and "statefulness": "stateless;
+    request bodies are processed in memory and discarded". Repeating any call returns the same
+    answer and changes nothing. Seven tools reach the network on the caller's behalf
+    (doc.extract, money.convert, http.check, http.assert, dns.lookup, domain.lookup, email.validate)
+    and their answers can change because the world changed, not because the call had an effect.
+  evidence:
+  - https://fluentedi.com/llms.txt
+  - https://fluentedi.com/.well-known/ai
+  retention: not applicable - no request is stored
+reversibility:
+  state: na
+  grade: na
+  detail: >-
+    The API has no write surface. Every one of the 99 operations computes a value and returns it;
+    nothing is created, updated, deleted or queued, and nothing is persisted, so there is no action
+    to take back. The provider declares this ("read-only and idempotent", "request and response
+    bodies are processed in memory and discarded" - /privacy, /.well-known/ai). No cancel, refund,
+    void, reverse, undo, rollback or restore operation exists anywhere in the spec, and none should.
+    Recorded as `na` rather than absent: the dimension does not apply, it was not skipped.
+  reversal_operations: []
+  evidence:
+  - url: https://fluentedi.com/privacy
+    status: 200
+  - url: https://fluentedi.com/.well-known/ai
+    status: 200
+dry_run_mode:
+  state: na
+  detail: >-
+    Rehearsal is meaningless for an API where every call is already a rehearsal - no operation has
+    a consequence to rehearse. The nearest equivalent is edi.build's `test_indicator` parameter,
+    which sets ISA15 to T so the X12 interchange is marked as test rather than production; that
+    marks the DOCUMENT as test data for the trading partner who eventually receives it, and has no
+    bearing on the API call itself.
+pagination:
+  supported: false
+  detail: >-
+    No operation returns a collection that pages. The two list-shaped tools bound their own output
+    with parameters rather than cursors - time.zones filters and limits, tool.search takes a limit -
+    and /v1/tools returns the complete 49-tool registry in one document.
+filtering_and_expansion:
+  supported: false
+  detail: No sparse-fieldset, expand or include parameters; result shapes are fixed per tool.
+metadata:
+  supported: false
+  detail: Nothing is stored, so there is nothing to attach metadata to.
+request_id_tracing:
+  supported: partial
+  detail: >-
+    No provider request-id header is returned. Cloudflare's cf-ray is present on every response and
+    is the only correlation handle available. A caller that needs a trace identity must supply it
+    out of band.
+  observed_headers: [cf-ray, x-service, x-docs, report-to, nel]
+versioning:
+  scheme: path + semver
+  path_prefix: /v1
+  current_version: 1.1.0
+  where_published:
+  - https://fluentedi.com/health
+  - https://fluentedi.com/.well-known/mcp.json
+  - 'openapi.json info.version'
+  - 'the x-service response header (FluentEDI/1.1.0)'
+  detail: >-
+    The service version is served on every response in the x-service header and in /health, which
+    also carries the deployed git commit and deploy timestamp. The URL path has been at /v1
+    throughout; no /v2 or superseded version is published, and no deprecation policy is stated.
+error_envelope:
+  detail: See errors/fluentedi-problem-types.yml. Not RFC 9457; a vendor envelope keyed on `ok`.
+  self_documenting: >-
+    A failing call returns the tool's full JSON Schema parameter block plus working example URLs in
+    the same body. This is the API's most distinctive convention and is worth calling out on its
+    own: the recovery path for a failed agent call is inside the failure, not in a documentation
+    fetch.
+rate_limit_signaling:
+  headers: []
+  detail: >-
+    No X-RateLimit-*, RateLimit-* or Retry-After headers are returned, and the provider states there
+    is no rate limit. See rate-limits/fluentedi-rate-limits.yml for the caveat.
+caching:
+  cache-control: no-store
+  detail: >-
+    Observed on a live tool response. Results are computed per request and explicitly not cached,
+    which is correct for time.now and the network-reaching tools.
+cors:
+  allow_origin: '*'
+  detail: Permissive by design so browser-resident agents can call it directly.
+security_headers_observed:
+  strict-transport-security: max-age=31536000; includeSubDomains
+  content-security-policy: "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; sandbox allow-same-origin"
+  x-content-type-options: nosniff
+  x-frame-options: DENY
+  referrer-policy: strict-origin-when-cross-origin
+  permissions-policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()
+discovery:
+  link_header: '</.well-known/api-catalog>; rel="api-catalog"'
+  detail: >-
+    Every response carries an RFC 9727 api-catalog Link header and an x-docs header pointing at
+    /llms.txt, so an agent that has only ever seen one response can find every other surface.
