@@ -80,6 +80,8 @@ x-enrichment:
   artifacts_added: 30
   pass: local-v1
 common:
+- type: Website
+  url: https://www.fluentedi.com/
 - type: DomainSecurity
   url: security/fluentedi-domain-security.yml
 - type: WellKnown
