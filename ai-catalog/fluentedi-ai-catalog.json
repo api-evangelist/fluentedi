@@ -1,0 +1,77 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "FluentEDI",
+    "identifier": "fluentedi.com",
+    "documentationUrl": "https://fluentedi.com/llms-full.txt"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:fluentedi.com:mcp:tools",
+      "displayName": "FluentEDI MCP server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://fluentedi.com/.well-known/mcp/server-card.json",
+      "description": "Deterministic tools for AI agents. No key, no signup, no SDK.",
+      "tags": [
+        "mcp-server",
+        "tools",
+        "no-auth",
+        "json",
+        "time",
+        "cryptography",
+        "edi",
+        "x12"
+      ],
+      "representativeQueries": [
+        "what time is it in Tokyo",
+        "is this shipment inside its delivery window",
+        "parse an X12 856 advance ship notice",
+        "compute the SSCC-18 check digit",
+        "fix this malformed JSON"
+      ]
+    },
+    {
+      "identifier": "urn:air:fluentedi.com:api:rest",
+      "displayName": "FluentEDI REST API",
+      "type": "application/json",
+      "url": "https://fluentedi.com/openapi.json",
+      "description": "OpenAPI 3.1 description of all 49 tools. No authentication.",
+      "tags": [
+        "api",
+        "openapi",
+        "rest"
+      ],
+      "representativeQueries": [
+        "free API to validate a GTIN check digit",
+        "convert CSV to JSON without a key",
+        "verify an Ed25519 signature over HTTP"
+      ]
+    },
+    {
+      "identifier": "urn:air:fluentedi.com:docs:llms",
+      "displayName": "FluentEDI agent reference",
+      "type": "text/plain",
+      "url": "https://fluentedi.com/llms-full.txt",
+      "description": "Every tool, parameter and worked example in one file.",
+      "tags": [
+        "documentation",
+        "llms-txt"
+      ]
+    },
+    {
+      "identifier": "urn:air:fluentedi.com:registry:tools",
+      "displayName": "Tool registry",
+      "type": "application/json",
+      "url": "https://fluentedi.com/v1/tools",
+      "description": "Machine-readable index of every tool and its endpoint.",
+      "tags": [
+        "registry",
+        "index"
+      ],
+      "representativeQueries": [
+        "what tools does this service provide",
+        "list every endpoint"
+      ]
+    }
+  ]
+}
