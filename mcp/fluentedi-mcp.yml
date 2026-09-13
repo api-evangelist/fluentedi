@@ -10,6 +10,11 @@ deployment:
   endpoint: https://fluentedi.com/mcp
   auth: none
   verified: probed
+  probe_prior: (never probed)
+  probe: live
+  probe_why: live
+  checked: '2026-09-11'
+  source: claimed-backlog re-probe 2026-09-11
 transport: streamable-http
 supported_protocol_versions:
 - '2026-07-28'
@@ -27,14 +32,14 @@ registry:
   latest_version: 1.1.0
   published: '2026-08-29T10:04:09Z'
   status: active
-  note: >-
-    Two versions are listed (1.0.0 published 2026-08-23, 1.1.0 published 2026-08-29 and marked
-    isLatest). The com.fluentedi namespace requires control of fluentedi.com to publish, which is
-    independent evidence that the server and the domain are the same operator.
+  note: Two versions are listed (1.0.0 published 2026-08-23, 1.1.0 published 2026-08-29 and marked isLatest).
+    The com.fluentedi namespace requires control of fluentedi.com to publish, which is independent evidence
+    that the server and the domain are the same operator.
 install:
   claude_code: claude mcp add --transport http fluentedi https://fluentedi.com/mcp
   client_config: '{ "mcpServers": { "fluentedi": { "url": "https://fluentedi.com/mcp" } } }'
-  note: Verbatim from the provider README at https://github.com/mastermanas805/fluentedi-mcp. No local stdio package is published.
+  note: Verbatim from the provider README at https://github.com/mastermanas805/fluentedi-mcp. No local
+    stdio package is published.
 probe:
   url: https://fluentedi.com/mcp
   method: POST
@@ -44,8 +49,7 @@ probe:
   fetched: '2026-09-03'
   tools_returned: 19
   saved: mcp/fluentedi-mcp-tools-list.json
-  note: >-
-    Anonymous tools/list succeeds - no OAuth challenge, no token. Full inputSchema is returned for
+  note: Anonymous tools/list succeeds - no OAuth challenge, no token. Full inputSchema is returned for
     every tool, so the MCP surface is introspectable by any agent without an account.
 divergence:
   declared_tool_count: 49
@@ -54,12 +58,11 @@ divergence:
   - https://fluentedi.com/.well-known/ai
   - https://fluentedi.com/v1/tools
   live_tools_list_count: 19
-  finding: >-
-    The manifests advertise 49 tools; the live MCP tools/list returns 19. The other 30 REST tools
-    are still reachable over MCP indirectly, because tool.call is exposed and its own description
-    says it can "invoke any tool by name, including ones not in the default listing". So the
-    listing is a curated subset rather than a missing capability - but an MCP client that only
-    reads tools/list sees 19, not 49.
+  finding: The manifests advertise 49 tools; the live MCP tools/list returns 19. The other 30 REST tools
+    are still reachable over MCP indirectly, because tool.call is exposed and its own description says
+    it can "invoke any tool by name, including ones not in the default listing". So the listing is a curated
+    subset rather than a missing capability - but an MCP client that only reads tools/list sees 19, not
+    49.
 tools:
 - time_now
 - time_convert
@@ -81,6 +84,6 @@ tools:
 - tool_describe
 - tool_call
 oauth:
-  '/.well-known/oauth-authorization-server': 404
-  '/.well-known/oauth-protected-resource': 404
+  /.well-known/oauth-authorization-server: 404
+  /.well-known/oauth-protected-resource: 404
   note: No OAuth metadata is served, consistent with an unauthenticated server.
