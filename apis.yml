@@ -23,28 +23,22 @@ tags:
 - Data Validation
 - Supply Chain
 apis:
-- name: FluentEDI Tools API
-  description: Stateless HTTP tool API. 50 paths and 99 operations in the served OpenAPI 3.1, no authentication.
-    A failed call returns the tool parameter schema plus working example URLs.
+- aid: fluentedi:fluentedi-compute-api
+  name: FluentEDI Compute API
+  description: Calculation and conversion
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
-  - EDI
-  - X12
-  - AI Agents
-  - MCP
-  - Developer Tools
+  - compute
   properties:
   - type: OpenAPI
-    url: https://fluentedi.com/openapi.json
+    url: openapi/fluentedi-compute-api-openapi.yml
   - type: Documentation
     url: https://fluentedi.com/
   - type: LLMsTxt
     url: https://fluentedi.com/llms.txt
   - type: LLMsFullTxt
     url: https://fluentedi.com/llms-full.txt
-  - type: MCPServer
-    url: https://fluentedi.com/mcp
   - type: APICatalog
     url: https://fluentedi.com/.well-known/api-catalog
   - type: WellKnown
@@ -53,18 +47,282 @@ apis:
     url: https://fluentedi.com/v1/tools
   - type: Sitemap
     url: https://fluentedi.com/sitemap.xml
-  - type: OpenAPI
-    url: openapi/fluentedi-openapi.json
   - type: APIReference
     url: https://fluentedi.com/llms-full.txt
-  - type: MCPServer
-    url: mcp/fluentedi-mcp.yml
   - type: ToolCrosswalk
     url: mcp/fluentedi-tool-crosswalk.yml
   - type: Examples
     url: examples/fluentedi-examples.yml
-  - type: Overlay
-    url: overlays/fluentedi-openapi-overlay.yaml
+- aid: fluentedi:fluentedi-crypto-api
+  name: FluentEDI Crypto API
+  description: Hashing, signatures, encoding and identifiers
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - crypto
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-crypto-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-data-api
+  name: FluentEDI Data API
+  description: JSON and tabular data
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - data
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-data-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-doc-api
+  name: FluentEDI Doc API
+  description: Documents (PDF, Word, Excel)
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - doc
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-doc-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-edi-api
+  name: FluentEDI Edi API
+  description: EDI and retail supply chain (X12)
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - edi
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-edi-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-meta-api
+  name: FluentEDI Meta API
+  description: Finding your way around
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - meta
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-meta-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-schedule-api
+  name: FluentEDI Schedule API
+  description: Scheduling
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - schedule
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-schedule-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-text-api
+  name: FluentEDI Text API
+  description: Text
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - text
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-text-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-time-api
+  name: FluentEDI Time API
+  description: Time, dates and windows
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - time
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-time-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
+- aid: fluentedi:fluentedi-web-api
+  name: FluentEDI Web API
+  description: Web and network
+  humanURL: https://fluentedi.com/
+  baseURL: https://fluentedi.com
+  tags:
+  - web
+  properties:
+  - type: OpenAPI
+    url: openapi/fluentedi-web-api-openapi.yml
+  - type: Documentation
+    url: https://fluentedi.com/
+  - type: LLMsTxt
+    url: https://fluentedi.com/llms.txt
+  - type: LLMsFullTxt
+    url: https://fluentedi.com/llms-full.txt
+  - type: APICatalog
+    url: https://fluentedi.com/.well-known/api-catalog
+  - type: WellKnown
+    url: https://fluentedi.com/.well-known/ai
+  - type: ToolRegistry
+    url: https://fluentedi.com/v1/tools
+  - type: Sitemap
+    url: https://fluentedi.com/sitemap.xml
+  - type: APIReference
+    url: https://fluentedi.com/llms-full.txt
+  - type: ToolCrosswalk
+    url: mcp/fluentedi-tool-crosswalk.yml
+  - type: Examples
+    url: examples/fluentedi-examples.yml
 image: https://fluentedi.com/favicon.svg
 maintainers:
 - FN: FluentEDI
@@ -80,6 +338,12 @@ x-enrichment:
   artifacts_added: 30
   pass: local-v1
 common:
+- type: MCPServer
+  url: https://fluentedi.com/mcp
+- type: MCPServer
+  url: mcp/fluentedi-mcp.yml
+- type: Overlay
+  url: overlays/fluentedi-openapi-overlay.yaml
 - type: Website
   url: https://www.fluentedi.com/
 - type: DomainSecurity
