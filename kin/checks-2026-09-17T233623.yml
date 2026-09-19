@@ -2,16 +2,17 @@
 kin_checks:
   slug: fluentedi
   schema_version: 0.22.0
-  scored_at: '2026-09-15'
-  run_ts: 2026-09-15T230249
-  note: Actionable checks only (missed + partial). earned/na are every other check
-    in rubric/scoring-0.22.0.yml; counts below let you verify that.
+  scored_at: '2026-09-17'
+  run_ts: 2026-09-17T233623
+  note: Actionable checks (missed + partial) in `checks`, plus the ids that did not
+    apply in `na`. Everything else in rubric/scoring-0.22.0.yml was earned; counts
+    below let you verify that.
   counts:
     total: 136
-    earned: 26
-    partial: 11
-    missed: 55
-    na: 44
+    earned: 38
+    partial: 10
+    missed: 62
+    na: 26
   checks:
   - id: maintainer_present
     status: missed
@@ -19,6 +20,27 @@ kin_checks:
     status: missed
   - id: apis_json_self_hosted
     status: missed
+  - id: openapi_3_2
+    status: missed
+    detail: 0 of 10 openapi documents pass
+  - id: openapi_3_0
+    status: missed
+    detail: 0 of 10 openapi documents pass
+  - id: info_complete
+    status: missed
+    detail: 0 of 10 openapi documents pass
+  - id: components_reuse
+    status: missed
+    detail: 0 of 10 openapi documents pass
+  - id: security_schemes_defined
+    status: missed
+    detail: 0 of 10 openapi documents pass
+  - id: security_applied
+    status: missed
+    detail: 0 of 10 openapi documents pass
+  - id: webhooks_or_callbacks
+    status: missed
+    detail: 0 of 10 openapi documents pass
   - id: asyncapi_present
     status: missed
   - id: json_schema_present
@@ -125,7 +147,7 @@ kin_checks:
     status: missed
   - id: examples_present
     status: partial
-    earned: 1.0
+    earned: 3.94
   - id: conformance_declared
     status: partial
     earned: 1.5
@@ -152,10 +174,6 @@ kin_checks:
     status: partial
     earned: 4.0
     detail: 'grade: documented'
-  - id: openapi_examples
-    status: partial
-    earned: 1.75
-    detail: 'grade: documented'
   - id: rate_limit_signal
     status: partial
     earned: 3.5
@@ -164,3 +182,30 @@ kin_checks:
     status: partial
     earned: 1.25
     detail: 'authorship: derived'
+  na:
+  - asyncapi_3_x
+  - channels_defined
+  - contract_self_operated
+  - fhir_capability_statement
+  - fhir_resource_coverage
+  - graphql_descriptions
+  - graphql_sdl_present
+  - graphql_type_depth
+  - inbound_contract_published
+  - messages_with_schema
+  - os_code_of_conduct
+  - os_contribution_guide
+  - os_releases
+  - os_security_policy
+  - reg_camara_conformance
+  - reg_certification_signal
+  - reg_consent_model
+  - reg_entitlement_terms
+  - reg_fapi_profile
+  - reg_mandate_verified
+  - reg_named_standard_conformance
+  - reg_pci_sca
+  - reg_smart_configuration
+  - reg_write_surface
+  - security_schemes
+  - server_bindings

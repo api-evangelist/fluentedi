@@ -29,6 +29,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Compute
+  tags_raw:
   - compute
   properties:
   - type: OpenAPI
@@ -59,6 +61,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Crypto
+  tags_raw:
   - crypto
   properties:
   - type: OpenAPI
@@ -89,6 +93,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Data
+  tags_raw:
   - data
   properties:
   - type: OpenAPI
@@ -119,6 +125,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Doc
+  tags_raw:
   - doc
   properties:
   - type: OpenAPI
@@ -149,6 +157,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - EDI
+  tags_raw:
   - edi
   properties:
   - type: OpenAPI
@@ -179,6 +189,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Meta
+  tags_raw:
   - meta
   properties:
   - type: OpenAPI
@@ -209,6 +221,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Schedule
+  tags_raw:
   - schedule
   properties:
   - type: OpenAPI
@@ -239,6 +253,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Text
+  tags_raw:
   - text
   properties:
   - type: OpenAPI
@@ -269,6 +285,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Time
+  tags_raw:
   - time
   properties:
   - type: OpenAPI
@@ -299,6 +317,8 @@ apis:
   humanURL: https://fluentedi.com/
   baseURL: https://fluentedi.com
   tags:
+  - Web
+  tags_raw:
   - web
   properties:
   - type: OpenAPI
