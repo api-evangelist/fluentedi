@@ -1,0 +1,38 @@
+{
+  "provider": "fluentedi",
+  "sources": [
+    "_original/fluentedi-openapi.json"
+  ],
+  "outputs": [
+    "fluentedi-compute-api-openapi.yml",
+    "fluentedi-crypto-api-openapi.yml",
+    "fluentedi-data-api-openapi.yml",
+    "fluentedi-doc-api-openapi.yml",
+    "fluentedi-edi-api-openapi.yml",
+    "fluentedi-meta-api-openapi.yml",
+    "fluentedi-schedule-api-openapi.yml",
+    "fluentedi-text-api-openapi.yml",
+    "fluentedi-time-api-openapi.yml",
+    "fluentedi-web-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "fluentedi-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "fluentedi-compute-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-crypto-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-data-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-doc-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-edi-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-meta-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-schedule-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-text-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-time-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fluentedi-web-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

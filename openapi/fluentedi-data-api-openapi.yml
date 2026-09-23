@@ -1,0 +1,645 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Data API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Data
+  description: JSON and tabular data
+paths:
+  /v1/json/query:
+    get:
+      operationId: json_query_get
+      summary: Extract values from a JSON document with a JSONPath expression
+      description: Runs a JSONPath query and returns the matching values with their concrete paths. Supports property access, array indexing (including negative indices), slices, wildcards, recursive descent (`..`) and filters (`[?(@.price > 10)]`). Pull three fields out of a large API response without carrying the whole document through context.
+      tags:
+      - Data
+      parameters:
+      - name: json
+        in: query
+        required: true
+        description: The JSON document, as an object or a JSON string.
+        schema:
+          description: The JSON document, as an object or a JSON string.
+          maxLength: 1000000
+      - name: path
+        in: query
+        required: true
+        description: JSONPath expression, e.g. "$.items[*].id" or "$..author".
+        schema:
+          description: JSONPath expression, e.g. "$.items[*].id" or "$..author".
+          type: string
+          maxLength: 1000
+          examples:
+          - $.items[*].id
+      - name: first_only
+        in: query
+        required: false
+        description: Return only the first match.
+        schema:
+          description: Return only the first match.
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: json_query_post
+      summary: Extract values from a JSON document with a JSONPath expression
+      description: Runs a JSONPath query and returns the matching values with their concrete paths. Supports property access, array indexing (including negative indices), slices, wildcards, recursive descent (`..`) and filters (`[?(@.price > 10)]`). Pull three fields out of a large API response without carrying the whole document through context.
+      tags:
+      - Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                json:
+                  description: The JSON document, as an object or a JSON string.
+                  maxLength: 1000000
+                path:
+                  description: JSONPath expression, e.g. "$.items[*].id" or "$..author".
+                  type: string
+                  maxLength: 1000
+                  examples:
+                  - $.items[*].id
+                first_only:
+                  description: Return only the first match.
+                  type: boolean
+                  default: false
+              required:
+              - json
+              - path
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/json/repair:
+    get:
+      operationId: json_repair_get
+      summary: Repair malformed JSON and pinpoint the exact line and column when it cannot be…
+      description: 'Takes JSON that almost parses and makes it parse: markdown code fences, prose wrapped around the object, trailing commas, single or smart quotes, unquoted keys, Python True/False/None, comments, NaN, and brackets left open by a truncated response. Every change is reported, so the caller learns what its generator got wrong rather than silently depending on a fixer. When the input cannot be salvaged it returns the precise line, column and a caret pointing at the offending character — which is what makes the next attempt succeed instead of guessing.'
+      tags:
+      - Data
+      parameters:
+      - name: input
+        in: query
+        required: true
+        description: The malformed JSON text.
+        schema:
+          description: The malformed JSON text.
+          type: string
+          maxLength: 1000000
+      - name: close_truncated
+        in: query
+        required: false
+        description: Close brackets left open by a cut-off response.
+        schema:
+          description: Close brackets left open by a cut-off response.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: json_repair_post
+      summary: Repair malformed JSON and pinpoint the exact line and column when it cannot be…
+      description: 'Takes JSON that almost parses and makes it parse: markdown code fences, prose wrapped around the object, trailing commas, single or smart quotes, unquoted keys, Python True/False/None, comments, NaN, and brackets left open by a truncated response. Every change is reported, so the caller learns what its generator got wrong rather than silently depending on a fixer. When the input cannot be salvaged it returns the precise line, column and a caret pointing at the offending character — which is what makes the next attempt succeed instead of guessing.'
+      tags:
+      - Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  description: The malformed JSON text.
+                  type: string
+                  maxLength: 1000000
+                close_truncated:
+                  description: Close brackets left open by a cut-off response.
+                  type: boolean
+                  default: true
+              required:
+              - input
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/json/canonical:
+    get:
+      operationId: json_canonical_get
+      summary: Canonicalize JSON (RFC 8785) and content-address it with SHA-256 and a CIDv1
+      description: 'Serializes a JSON document to its one canonical form — keys sorted, whitespace dropped, numbers in ECMAScript form — then hashes it. Two documents that mean the same thing produce the same digest regardless of key order or formatting, which is what makes the digest quotable as a receipt. A log line is a claim that the process which wrote it could also edit; a content address is computed from the content, so changing the content changes the address. Pair it with crypto.verify: canonicalize, sign the digest with your own key, and anyone can check the pair without trusting either of you.'
+      tags:
+      - Data
+      parameters:
+      - name: json
+        in: query
+        required: true
+        description: The JSON document, as an object or a JSON string.
+        schema:
+          description: The JSON document, as an object or a JSON string.
+          maxLength: 1000000
+      - name: include_canonical
+        in: query
+        required: false
+        description: Include the canonical serialization itself, not just its digest.
+        schema:
+          description: Include the canonical serialization itself, not just its digest.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: json_canonical_post
+      summary: Canonicalize JSON (RFC 8785) and content-address it with SHA-256 and a CIDv1
+      description: 'Serializes a JSON document to its one canonical form — keys sorted, whitespace dropped, numbers in ECMAScript form — then hashes it. Two documents that mean the same thing produce the same digest regardless of key order or formatting, which is what makes the digest quotable as a receipt. A log line is a claim that the process which wrote it could also edit; a content address is computed from the content, so changing the content changes the address. Pair it with crypto.verify: canonicalize, sign the digest with your own key, and anyone can check the pair without trusting either of you.'
+      tags:
+      - Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                json:
+                  description: The JSON document, as an object or a JSON string.
+                  maxLength: 1000000
+                include_canonical:
+                  description: Include the canonical serialization itself, not just its digest.
+                  type: boolean
+                  default: true
+              required:
+              - json
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/json/diff:
+    get:
+      operationId: json_diff_get
+      summary: Structural difference between two JSON documents, as RFC 6902-style operations
+      description: Compares two JSON documents key by key and reports every addition, removal and change with a JSON Pointer path. Key order and formatting are ignored, so it answers 'did the data actually change' rather than 'did the bytes change' — the right check for API responses and config drift.
+      tags:
+      - Data
+      parameters:
+      - name: a
+        in: query
+        required: true
+        description: First document (object or JSON string).
+        schema:
+          description: First document (object or JSON string).
+          maxLength: 1000000
+      - name: b
+        in: query
+        required: true
+        description: Second document (object or JSON string).
+        schema:
+          description: Second document (object or JSON string).
+          maxLength: 1000000
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: json_diff_post
+      summary: Structural difference between two JSON documents, as RFC 6902-style operations
+      description: Compares two JSON documents key by key and reports every addition, removal and change with a JSON Pointer path. Key order and formatting are ignored, so it answers 'did the data actually change' rather than 'did the bytes change' — the right check for API responses and config drift.
+      tags:
+      - Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                a:
+                  description: First document (object or JSON string).
+                  maxLength: 1000000
+                b:
+                  description: Second document (object or JSON string).
+                  maxLength: 1000000
+              required:
+              - a
+              - b
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/json/schema:
+    get:
+      operationId: json_schema_get
+      summary: Infer a JSON Schema from an example document
+      description: Generates a draft 2020-12 JSON Schema from one or more sample documents, detecting string formats (date-time, email, uri, uuid, ipv4) and merging array members into a single item schema. Turns an undocumented API response into a contract you can validate against or hand to a typed client generator.
+      tags:
+      - Data
+      parameters:
+      - name: json
+        in: query
+        required: true
+        description: Sample document, or an array of samples to merge.
+        schema:
+          description: Sample document, or an array of samples to merge.
+          maxLength: 1000000
+      - name: title
+        in: query
+        required: false
+        description: Optional schema title.
+        schema:
+          description: Optional schema title.
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: json_schema_post
+      summary: Infer a JSON Schema from an example document
+      description: Generates a draft 2020-12 JSON Schema from one or more sample documents, detecting string formats (date-time, email, uri, uuid, ipv4) and merging array members into a single item schema. Turns an undocumented API response into a contract you can validate against or hand to a typed client generator.
+      tags:
+      - Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                json:
+                  description: Sample document, or an array of samples to merge.
+                  maxLength: 1000000
+                title:
+                  description: Optional schema title.
+                  type: string
+                  default: ''
+              required:
+              - json
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/api/diff:
+    get:
+      operationId: api_diff_get
+      summary: Diff an API's declared contract against payloads it actually returned; classify…
+      description: 'Answers ''is this endpoint keeping its promise'' — the failure mode where docs say one thing and the live API returns another, the schema validates, and nothing errors. Give it the declared JSON Schema (or a baseline payload to infer one from) plus one or more observed payloads. Returns a verdict, the inferred observed schema, and classified findings: type_mismatch, missing_field and enum_violation (action: block), nullable_in_practice, format_mismatch, undeclared_field and extra_field (action: warn), each with a JSON Pointer path and how many samples it affected. Declared-schema keywords outside the checked subset are listed in ignored_keywords, never silently trusted. Stateless: you hold the baseline, nothing is stored.'
+      tags:
+      - Data
+      parameters:
+      - name: declared
+        in: query
+        required: false
+        description: 'Declared contract: a JSON Schema (object or string). Omit to infer one from `baseline`.'
+        schema:
+          description: 'Declared contract: a JSON Schema (object or string). Omit to infer one from `baseline`.'
+          maxLength: 500000
+      - name: baseline
+        in: query
+        required: false
+        description: 'Alternative to `declared`: a known-good payload (or array of them) to infer the contract from.'
+        schema:
+          description: 'Alternative to `declared`: a known-good payload (or array of them) to infer the contract from.'
+          maxLength: 500000
+      - name: observed
+        in: query
+        required: true
+        description: Payload the endpoint actually returned, or an array of payloads to check together.
+        schema:
+          description: Payload the endpoint actually returned, or an array of payloads to check together.
+          maxLength: 1000000
+      - name: samples
+        in: query
+        required: false
+        description: Treat a top-level `observed` array as multiple samples rather than one array payload.
+        schema:
+          description: Treat a top-level `observed` array as multiple samples rather than one array payload.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: api_diff_post
+      summary: Diff an API's declared contract against payloads it actually returned; classify…
+      description: 'Answers ''is this endpoint keeping its promise'' — the failure mode where docs say one thing and the live API returns another, the schema validates, and nothing errors. Give it the declared JSON Schema (or a baseline payload to infer one from) plus one or more observed payloads. Returns a verdict, the inferred observed schema, and classified findings: type_mismatch, missing_field and enum_violation (action: block), nullable_in_practice, format_mismatch, undeclared_field and extra_field (action: warn), each with a JSON Pointer path and how many samples it affected. Declared-schema keywords outside the checked subset are listed in ignored_keywords, never silently trusted. Stateless: you hold the baseline, nothing is stored.'
+      tags:
+      - Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                declared:
+                  description: 'Declared contract: a JSON Schema (object or string). Omit to infer one from `baseline`.'
+                  maxLength: 500000
+                baseline:
+                  description: 'Alternative to `declared`: a known-good payload (or array of them) to infer the contract from.'
+                  maxLength: 500000
+                observed:
+                  description: Payload the endpoint actually returned, or an array of payloads to check together.
+                  maxLength: 1000000
+                samples:
+                  description: Treat a top-level `observed` array as multiple samples rather than one array payload.
+                  type: boolean
+                  default: true
+              required:
+              - observed
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/csv/convert:
+    get:
+      operationId: csv_convert_get
+      summary: Convert between CSV and JSON with correct quote handling
+      description: 'A full RFC 4180 parser: quoted fields, escaped quotes, embedded commas and newlines inside cells all survive the round trip, and the delimiter is detected automatically. Splitting CSV on commas is the classic silent data-corruption bug; this does not have it.'
+      tags:
+      - Data
+      parameters:
+      - name: input
+        in: query
+        required: true
+        description: CSV text, or JSON array of objects when converting to CSV.
+        schema:
+          description: CSV text, or JSON array of objects when converting to CSV.
+          maxLength: 1000000
+      - name: direction
+        in: query
+        required: false
+        description: Conversion direction.
+        schema:
+          description: Conversion direction.
+          type: string
+          enum:
+          - csv_to_json
+          - json_to_csv
+          default: csv_to_json
+      - name: delimiter
+        in: query
+        required: false
+        description: Field delimiter. "auto" detects among comma, semicolon, tab and pipe.
+        schema:
+          description: Field delimiter. "auto" detects among comma, semicolon, tab and pipe.
+          type: string
+          default: auto
+          maxLength: 4
+      - name: header
+        in: query
+        required: false
+        description: Treat the first CSV row as column names.
+        schema:
+          description: Treat the first CSV row as column names.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: csv_convert_post
+      summary: Convert between CSV and JSON with correct quote handling
+      description: 'A full RFC 4180 parser: quoted fields, escaped quotes, embedded commas and newlines inside cells all survive the round trip, and the delimiter is detected automatically. Splitting CSV on commas is the classic silent data-corruption bug; this does not have it.'
+      tags:
+      - Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  description: CSV text, or JSON array of objects when converting to CSV.
+                  maxLength: 1000000
+                direction:
+                  description: Conversion direction.
+                  type: string
+                  enum:
+                  - csv_to_json
+                  - json_to_csv
+                  default: csv_to_json
+                delimiter:
+                  description: Field delimiter. "auto" detects among comma, semicolon, tab and pipe.
+                  type: string
+                  default: auto
+                  maxLength: 4
+                header:
+                  description: Treat the first CSV row as column names.
+                  type: boolean
+                  default: true
+              required:
+              - input
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

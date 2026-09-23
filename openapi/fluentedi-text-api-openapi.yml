@@ -1,0 +1,783 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Text API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Text
+  description: Text
+paths:
+  /v1/text/stats:
+    get:
+      operationId: text_stats_get
+      summary: Count characters, words, bytes, sentences and estimated tokens; score…
+      description: Measures text the way a form validator, a database column and a model context window each measure it — characters, UTF-8 bytes and estimated tokens are three different numbers, and conflating them is how 'it fits' turns into a truncation bug. Also returns Flesch reading ease and Flesch-Kincaid grade level.
+      tags:
+      - Text
+      parameters:
+      - name: text
+        in: query
+        required: true
+        description: Text to measure.
+        schema:
+          description: Text to measure.
+          type: string
+          maxLength: 500000
+      - name: top_words
+        in: query
+        required: false
+        description: How many of the most frequent words to return (0 disables).
+        schema:
+          description: How many of the most frequent words to return (0 disables).
+          type: integer
+          default: 10
+          minimum: 0
+          maximum: 100
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: text_stats_post
+      summary: Count characters, words, bytes, sentences and estimated tokens; score…
+      description: Measures text the way a form validator, a database column and a model context window each measure it — characters, UTF-8 bytes and estimated tokens are three different numbers, and conflating them is how 'it fits' turns into a truncation bug. Also returns Flesch reading ease and Flesch-Kincaid grade level.
+      tags:
+      - Text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: Text to measure.
+                  type: string
+                  maxLength: 500000
+                top_words:
+                  description: How many of the most frequent words to return (0 disables).
+                  type: integer
+                  default: 10
+                  minimum: 0
+                  maximum: 100
+              required:
+              - text
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/text/case:
+    get:
+      operationId: text_case_get
+      summary: Convert a string to camelCase, snake_case, kebab-case, Title Case, a URL slug…
+      description: Splits an identifier on whatever convention it currently uses — spaces, underscores, hyphens or camel humps, including acronym runs like 'HTTPServer' — then re-emits it in every common casing at once. The slug form also strips accents and punctuation for use in URLs.
+      tags:
+      - Text
+      parameters:
+      - name: text
+        in: query
+        required: true
+        description: Input string.
+        schema:
+          description: Input string.
+          type: string
+          maxLength: 10000
+          examples:
+          - hello world example
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: text_case_post
+      summary: Convert a string to camelCase, snake_case, kebab-case, Title Case, a URL slug…
+      description: Splits an identifier on whatever convention it currently uses — spaces, underscores, hyphens or camel humps, including acronym runs like 'HTTPServer' — then re-emits it in every common casing at once. The slug form also strips accents and punctuation for use in URLs.
+      tags:
+      - Text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: Input string.
+                  type: string
+                  maxLength: 10000
+                  examples:
+                  - hello world example
+              required:
+              - text
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/text/diff:
+    get:
+      operationId: text_diff_get
+      summary: Unified diff between two texts, with change statistics and a similarity score
+      description: Produces a git-style unified diff plus structured hunks and a similarity ratio. Compare by line for code and config, or by word to see edits inside a paragraph. Useful for confirming exactly what changed before writing a file, and for summarising a change without re-reading both versions.
+      tags:
+      - Text
+      parameters:
+      - name: a
+        in: query
+        required: true
+        description: Original text.
+        schema:
+          description: Original text.
+          type: string
+          maxLength: 200000
+      - name: b
+        in: query
+        required: true
+        description: Modified text.
+        schema:
+          description: Modified text.
+          type: string
+          maxLength: 200000
+      - name: mode
+        in: query
+        required: false
+        description: Granularity of comparison.
+        schema:
+          description: Granularity of comparison.
+          type: string
+          enum:
+          - line
+          - word
+          default: line
+      - name: context
+        in: query
+        required: false
+        description: Lines of unchanged context around each hunk.
+        schema:
+          description: Lines of unchanged context around each hunk.
+          type: integer
+          default: 3
+          minimum: 0
+          maximum: 20
+      - name: ignore_whitespace
+        in: query
+        required: false
+        description: Ignore leading/trailing whitespace differences.
+        schema:
+          description: Ignore leading/trailing whitespace differences.
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: text_diff_post
+      summary: Unified diff between two texts, with change statistics and a similarity score
+      description: Produces a git-style unified diff plus structured hunks and a similarity ratio. Compare by line for code and config, or by word to see edits inside a paragraph. Useful for confirming exactly what changed before writing a file, and for summarising a change without re-reading both versions.
+      tags:
+      - Text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                a:
+                  description: Original text.
+                  type: string
+                  maxLength: 200000
+                b:
+                  description: Modified text.
+                  type: string
+                  maxLength: 200000
+                mode:
+                  description: Granularity of comparison.
+                  type: string
+                  enum:
+                  - line
+                  - word
+                  default: line
+                context:
+                  description: Lines of unchanged context around each hunk.
+                  type: integer
+                  default: 3
+                  minimum: 0
+                  maximum: 20
+                ignore_whitespace:
+                  description: Ignore leading/trailing whitespace differences.
+                  type: boolean
+                  default: false
+              required:
+              - a
+              - b
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/text/offset:
+    get:
+      operationId: text_offset_get
+      summary: 'Convert between text positions: byte offset, UTF-16 index, code point…'
+      description: One position in a string has at least five different numbers depending on who is counting. A UTF-8 byte offset, a UTF-16 code unit index (what JavaScript and LSP use), a code point index (what Python uses), a grapheme index (what a human means by 'the third character'), and a line/column pair. An emoji is one grapheme, two code units and four bytes; a flag is one grapheme and eight bytes. Models are measurably poor at character-level positions — benchmark accuracy around 43% — and worse when the queried character sits inside a long token. This converts between all of them exactly, so an edit lands where it was meant to.
+      tags:
+      - Text
+      parameters:
+      - name: text
+        in: query
+        required: true
+        description: The text to measure positions in.
+        schema:
+          description: The text to measure positions in.
+          type: string
+          maxLength: 500000
+      - name: position
+        in: query
+        required: false
+        description: The position to convert. Interpreted according to `unit`.
+        schema:
+          description: The position to convert. Interpreted according to `unit`.
+          type: integer
+          default: 0
+          minimum: 0
+      - name: unit
+        in: query
+        required: false
+        description: Which counting system `position` is expressed in.
+        schema:
+          description: Which counting system `position` is expressed in.
+          type: string
+          enum:
+          - utf16
+          - byte
+          - codepoint
+          - grapheme
+          default: utf16
+      - name: line
+        in: query
+        required: false
+        description: Convert FROM a line/column pair instead of `position`. 1-based.
+        schema:
+          description: Convert FROM a line/column pair instead of `position`. 1-based.
+          type: integer
+          default: 0
+          minimum: 0
+      - name: column
+        in: query
+        required: false
+        description: Column for `line`. 1-based, counted in `unit`.
+        schema:
+          description: Column for `line`. 1-based, counted in `unit`.
+          type: integer
+          default: 1
+          minimum: 1
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: text_offset_post
+      summary: 'Convert between text positions: byte offset, UTF-16 index, code point…'
+      description: One position in a string has at least five different numbers depending on who is counting. A UTF-8 byte offset, a UTF-16 code unit index (what JavaScript and LSP use), a code point index (what Python uses), a grapheme index (what a human means by 'the third character'), and a line/column pair. An emoji is one grapheme, two code units and four bytes; a flag is one grapheme and eight bytes. Models are measurably poor at character-level positions — benchmark accuracy around 43% — and worse when the queried character sits inside a long token. This converts between all of them exactly, so an edit lands where it was meant to.
+      tags:
+      - Text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: The text to measure positions in.
+                  type: string
+                  maxLength: 500000
+                position:
+                  description: The position to convert. Interpreted according to `unit`.
+                  type: integer
+                  default: 0
+                  minimum: 0
+                unit:
+                  description: Which counting system `position` is expressed in.
+                  type: string
+                  enum:
+                  - utf16
+                  - byte
+                  - codepoint
+                  - grapheme
+                  default: utf16
+                line:
+                  description: Convert FROM a line/column pair instead of `position`. 1-based.
+                  type: integer
+                  default: 0
+                  minimum: 0
+                column:
+                  description: Column for `line`. 1-based, counted in `unit`.
+                  type: integer
+                  default: 1
+                  minimum: 1
+              required:
+              - text
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/text/unicode:
+    get:
+      operationId: text_unicode_get
+      summary: Find invisible characters, bidi overrides and script confusables hiding in text
+      description: 'Scans for characters that are present to a tokenizer but absent to a reader: the Unicode TAG block, zero-width marks, bidirectional overrides, variation selectors, and letters from other scripts that look like Latin ones. This is the mechanism behind instructions concealed in tool descriptions and in text a human has already approved — an evaluation of MCP metadata surfaces found all eight tested techniques delivered a payload into model context, while a representative string-matching sanitizer flagged none of twenty-five benign descriptions. Reports each suspect with its code point and offset, and returns a cleaned copy.'
+      tags:
+      - Text
+      parameters:
+      - name: text
+        in: query
+        required: true
+        description: Text to scan.
+        schema:
+          description: Text to scan.
+          type: string
+          maxLength: 200000
+      - name: clean
+        in: query
+        required: false
+        description: Return a copy with invisible characters removed and confusables mapped to Latin.
+        schema:
+          description: Return a copy with invisible characters removed and confusables mapped to Latin.
+          type: boolean
+          default: true
+      - name: normalize
+        in: query
+        required: false
+        description: Unicode normalisation to apply to the cleaned copy.
+        schema:
+          description: Unicode normalisation to apply to the cleaned copy.
+          type: string
+          enum:
+          - none
+          - NFC
+          - NFKC
+          default: NFC
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: text_unicode_post
+      summary: Find invisible characters, bidi overrides and script confusables hiding in text
+      description: 'Scans for characters that are present to a tokenizer but absent to a reader: the Unicode TAG block, zero-width marks, bidirectional overrides, variation selectors, and letters from other scripts that look like Latin ones. This is the mechanism behind instructions concealed in tool descriptions and in text a human has already approved — an evaluation of MCP metadata surfaces found all eight tested techniques delivered a payload into model context, while a representative string-matching sanitizer flagged none of twenty-five benign descriptions. Reports each suspect with its code point and offset, and returns a cleaned copy.'
+      tags:
+      - Text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: Text to scan.
+                  type: string
+                  maxLength: 200000
+                clean:
+                  description: Return a copy with invisible characters removed and confusables mapped to Latin.
+                  type: boolean
+                  default: true
+                normalize:
+                  description: Unicode normalisation to apply to the cleaned copy.
+                  type: string
+                  enum:
+                  - none
+                  - NFC
+                  - NFKC
+                  default: NFC
+              required:
+              - text
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/shell/quote:
+    get:
+      operationId: shell_quote_get
+      summary: Quote a value safely for a shell, and report what would have gone wrong unquoted
+      description: Interpolating a value into a command line is the most common way an agent turns a correct plan into the wrong action. Adding one unescaped parser between the model and the shell has been measured to drop task success by 55 to 73 percentage points, and the damage is usually invisible because the command still runs — just not on what was intended. This applies the quoting rules for the named shell and, separately, names every hazard the raw value contained, so the caller learns which construct was dangerous rather than only receiving an escaped string.
+      tags:
+      - Text
+      parameters:
+      - name: value
+        in: query
+        required: true
+        description: The value to quote. Pass one argument, not a whole command line.
+        schema:
+          description: The value to quote. Pass one argument, not a whole command line.
+          type: string
+          maxLength: 100000
+      - name: shell
+        in: query
+        required: false
+        description: Target shell.
+        schema:
+          description: Target shell.
+          type: string
+          enum:
+          - sh
+          - bash
+          - cmd
+          - powershell
+          default: sh
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: shell_quote_post
+      summary: Quote a value safely for a shell, and report what would have gone wrong unquoted
+      description: Interpolating a value into a command line is the most common way an agent turns a correct plan into the wrong action. Adding one unescaped parser between the model and the shell has been measured to drop task success by 55 to 73 percentage points, and the damage is usually invisible because the command still runs — just not on what was intended. This applies the quoting rules for the named shell and, separately, names every hazard the raw value contained, so the caller learns which construct was dangerous rather than only receiving an escaped string.
+      tags:
+      - Text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  description: The value to quote. Pass one argument, not a whole command line.
+                  type: string
+                  maxLength: 100000
+                shell:
+                  description: Target shell.
+                  type: string
+                  enum:
+                  - sh
+                  - bash
+                  - cmd
+                  - powershell
+                  default: sh
+              required:
+              - value
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/regex/test:
+    get:
+      operationId: regex_test_get
+      summary: Test a regular expression against text and inspect every match and capture group
+      description: Runs a JavaScript regular expression and returns each match with its index, numbered groups and named groups — or performs a replace or split. Invalid patterns come back as a readable explanation instead of a thrown error, so a pattern can be corrected without a round trip through a broken deploy.
+      tags:
+      - Text
+      parameters:
+      - name: pattern
+        in: query
+        required: true
+        description: Regular expression source, without delimiters.
+        schema:
+          description: Regular expression source, without delimiters.
+          type: string
+          maxLength: 2000
+          examples:
+          - \b(\w+)@(\w+\.\w+)\b
+      - name: text
+        in: query
+        required: true
+        description: Text to run the pattern against.
+        schema:
+          description: Text to run the pattern against.
+          type: string
+          maxLength: 200000
+      - name: flags
+        in: query
+        required: false
+        description: Regex flags, e.g. "gi". The g flag is added automatically for match_all, replace and split.
+        schema:
+          description: Regex flags, e.g. "gi". The g flag is added automatically for match_all, replace and split.
+          type: string
+          default: g
+          maxLength: 8
+      - name: operation
+        in: query
+        required: false
+        description: What to do with the pattern.
+        schema:
+          description: What to do with the pattern.
+          type: string
+          enum:
+          - match_all
+          - test
+          - replace
+          - split
+          default: match_all
+      - name: replacement
+        in: query
+        required: false
+        description: Replacement string for the replace operation. Supports $1, $<name>.
+        schema:
+          description: Replacement string for the replace operation. Supports $1, $<name>.
+          type: string
+          default: ''
+      - name: limit
+        in: query
+        required: false
+        description: Maximum matches to return.
+        schema:
+          description: Maximum matches to return.
+          type: integer
+          default: 100
+          minimum: 1
+          maximum: 1000
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: regex_test_post
+      summary: Test a regular expression against text and inspect every match and capture group
+      description: Runs a JavaScript regular expression and returns each match with its index, numbered groups and named groups — or performs a replace or split. Invalid patterns come back as a readable explanation instead of a thrown error, so a pattern can be corrected without a round trip through a broken deploy.
+      tags:
+      - Text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pattern:
+                  description: Regular expression source, without delimiters.
+                  type: string
+                  maxLength: 2000
+                  examples:
+                  - \b(\w+)@(\w+\.\w+)\b
+                text:
+                  description: Text to run the pattern against.
+                  type: string
+                  maxLength: 200000
+                flags:
+                  description: Regex flags, e.g. "gi". The g flag is added automatically for match_all, replace and split.
+                  type: string
+                  default: g
+                  maxLength: 8
+                operation:
+                  description: What to do with the pattern.
+                  type: string
+                  enum:
+                  - match_all
+                  - test
+                  - replace
+                  - split
+                  default: match_all
+                replacement:
+                  description: Replacement string for the replace operation. Supports $1, $<name>.
+                  type: string
+                  default: ''
+                limit:
+                  description: Maximum matches to return.
+                  type: integer
+                  default: 100
+                  minimum: 1
+                  maximum: 1000
+              required:
+              - pattern
+              - text
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

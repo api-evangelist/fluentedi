@@ -1,0 +1,986 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Web API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Web
+  description: Web and network
+paths:
+  /v1/url/parse:
+    get:
+      operationId: url_parse_get
+      summary: Parse, normalise or resolve a URL and break out its query parameters
+      description: Decomposes a URL into scheme, host, port, path, query and fragment, decodes every query parameter (keeping repeated keys as arrays), and reports whether the host is an IP address or an IDN. Can also resolve a relative reference against a base URL — the operation that quietly breaks scrapers and link-followers when done with string concatenation.
+      tags:
+      - Web
+      parameters:
+      - name: url
+        in: query
+        required: true
+        description: URL or relative reference to parse.
+        schema:
+          description: URL or relative reference to parse.
+          type: string
+          maxLength: 8000
+          examples:
+          - https://example.com/a/b?q=hello%20world&tag=x&tag=y#top
+      - name: base
+        in: query
+        required: false
+        description: Base URL to resolve a relative reference against.
+        schema:
+          description: Base URL to resolve a relative reference against.
+          type: string
+          default: ''
+          maxLength: 8000
+      - name: strip_tracking
+        in: query
+        required: false
+        description: Also return the URL with utm_* and common click-tracking parameters removed.
+        schema:
+          description: Also return the URL with utm_* and common click-tracking parameters removed.
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: url_parse_post
+      summary: Parse, normalise or resolve a URL and break out its query parameters
+      description: Decomposes a URL into scheme, host, port, path, query and fragment, decodes every query parameter (keeping repeated keys as arrays), and reports whether the host is an IP address or an IDN. Can also resolve a relative reference against a base URL — the operation that quietly breaks scrapers and link-followers when done with string concatenation.
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  description: URL or relative reference to parse.
+                  type: string
+                  maxLength: 8000
+                  examples:
+                  - https://example.com/a/b?q=hello%20world&tag=x&tag=y#top
+                base:
+                  description: Base URL to resolve a relative reference against.
+                  type: string
+                  default: ''
+                  maxLength: 8000
+                strip_tracking:
+                  description: Also return the URL with utm_* and common click-tracking parameters removed.
+                  type: boolean
+                  default: false
+              required:
+              - url
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/url/scan:
+    get:
+      operationId: url_scan_get
+      summary: Detect credentials, tokens and personal data leaking in a URL, and return a…
+      description: 'Scans a URL''s query string, path, fragment and userinfo for secrets and personal data — provider API keys, JWTs, bearer tokens, private keys, high-entropy values in credential-shaped parameters, email addresses, national identifiers and Luhn-valid card numbers. A URL is the least private place to put a secret: it is written to server logs, proxy logs, browser history and Referer headers, none of which are covered by the transport encryption. Returns a redacted URL safe to paste into a log or a ticket.'
+      tags:
+      - Web
+      parameters:
+      - name: url
+        in: query
+        required: true
+        description: URL to scan.
+        schema:
+          description: URL to scan.
+          type: string
+          maxLength: 8000
+          examples:
+          - https://api.example.com/v1/items?api_key=REDACTED_STRIPE_KEY&user=ada@example.com
+      - name: include_low
+        in: query
+        required: false
+        description: Include low-severity findings such as tracking parameters.
+        schema:
+          description: Include low-severity findings such as tracking parameters.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: url_scan_post
+      summary: Detect credentials, tokens and personal data leaking in a URL, and return a…
+      description: 'Scans a URL''s query string, path, fragment and userinfo for secrets and personal data — provider API keys, JWTs, bearer tokens, private keys, high-entropy values in credential-shaped parameters, email addresses, national identifiers and Luhn-valid card numbers. A URL is the least private place to put a secret: it is written to server logs, proxy logs, browser history and Referer headers, none of which are covered by the transport encryption. Returns a redacted URL safe to paste into a log or a ticket.'
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  description: URL to scan.
+                  type: string
+                  maxLength: 8000
+                  examples:
+                  - https://api.example.com/v1/items?api_key=REDACTED_STRIPE_KEY&user=ada@example.com
+                include_low:
+                  description: Include low-severity findings such as tracking parameters.
+                  type: boolean
+                  default: true
+              required:
+              - url
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/secret/scan:
+    get:
+      operationId: secret_scan_get
+      summary: Find credentials and personal data in text, and return a redacted copy safe to…
+      description: 'Scans arbitrary text — logs, environment files, diffs, stack traces, config, command output — for provider API keys, tokens, private keys, database connection strings, credential-shaped assignments, high-entropy values, personal data and Luhn-valid card numbers. Each finding carries a line and column so it can be located, and the matched value is masked everywhere it is reported. The intended moment to call this is just before pasting output into a model, a ticket or a chat: text an agent forwards without reading is the ordinary way live credentials end up somewhere they cannot be recalled from.'
+      tags:
+      - Web
+      parameters:
+      - name: text
+        in: query
+        required: true
+        description: Text to scan.
+        schema:
+          description: Text to scan.
+          type: string
+          maxLength: 500000
+      - name: redact
+        in: query
+        required: false
+        description: Return a copy with every finding masked.
+        schema:
+          description: Return a copy with every finding masked.
+          type: boolean
+          default: true
+      - name: include_pii
+        in: query
+        required: false
+        description: Also flag personal data such as email addresses and phone numbers.
+        schema:
+          description: Also flag personal data such as email addresses and phone numbers.
+          type: boolean
+          default: true
+      - name: min_severity
+        in: query
+        required: false
+        description: Suppress findings below this severity.
+        schema:
+          description: Suppress findings below this severity.
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - critical
+          default: low
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: secret_scan_post
+      summary: Find credentials and personal data in text, and return a redacted copy safe to…
+      description: 'Scans arbitrary text — logs, environment files, diffs, stack traces, config, command output — for provider API keys, tokens, private keys, database connection strings, credential-shaped assignments, high-entropy values, personal data and Luhn-valid card numbers. Each finding carries a line and column so it can be located, and the matched value is masked everywhere it is reported. The intended moment to call this is just before pasting output into a model, a ticket or a chat: text an agent forwards without reading is the ordinary way live credentials end up somewhere they cannot be recalled from.'
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: Text to scan.
+                  type: string
+                  maxLength: 500000
+                redact:
+                  description: Return a copy with every finding masked.
+                  type: boolean
+                  default: true
+                include_pii:
+                  description: Also flag personal data such as email addresses and phone numbers.
+                  type: boolean
+                  default: true
+                min_severity:
+                  description: Suppress findings below this severity.
+                  type: string
+                  enum:
+                  - low
+                  - medium
+                  - high
+                  - critical
+                  default: low
+              required:
+              - text
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/http/check:
+    get:
+      operationId: http_check_get
+      summary: 'Check whether a URL is still live: status, redirect chain, and whether a…'
+      description: 'Resolves a URL and reports what actually happens to it — final status, the full redirect chain, content type and page title. Link rot is faster than it feels: one agent measured seven dead URLs out of 286 across fourteen days. This handles the three cases a naive checker gets wrong: an arXiv v1 to v2 redirect is a version change, not a break; a 403 is a blocked crawler, not a dead page; and a DOI can return 200 while the page behind it is now a retraction notice, which is the worst case because a simple status check passes and the reader gets something else. Response bodies are never returned — only status, headers, title and flags.'
+      tags:
+      - Web
+      parameters:
+      - name: url
+        in: query
+        required: true
+        description: URL to check.
+        schema:
+          description: URL to check.
+          type: string
+          maxLength: 4000
+          examples:
+          - https://arxiv.org/abs/1706.03762
+      - name: max_redirects
+        in: query
+        required: false
+        description: How many redirects to follow.
+        schema:
+          description: How many redirects to follow.
+          type: integer
+          default: 5
+          minimum: 0
+          maximum: 10
+      - name: timeout_ms
+        in: query
+        required: false
+        description: Per-request timeout in milliseconds.
+        schema:
+          description: Per-request timeout in milliseconds.
+          type: integer
+          default: 8000
+          minimum: 1000
+          maximum: 20000
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: http_check_post
+      summary: 'Check whether a URL is still live: status, redirect chain, and whether a…'
+      description: 'Resolves a URL and reports what actually happens to it — final status, the full redirect chain, content type and page title. Link rot is faster than it feels: one agent measured seven dead URLs out of 286 across fourteen days. This handles the three cases a naive checker gets wrong: an arXiv v1 to v2 redirect is a version change, not a break; a 403 is a blocked crawler, not a dead page; and a DOI can return 200 while the page behind it is now a retraction notice, which is the worst case because a simple status check passes and the reader gets something else. Response bodies are never returned — only status, headers, title and flags.'
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  description: URL to check.
+                  type: string
+                  maxLength: 4000
+                  examples:
+                  - https://arxiv.org/abs/1706.03762
+                max_redirects:
+                  description: How many redirects to follow.
+                  type: integer
+                  default: 5
+                  minimum: 0
+                  maximum: 10
+                timeout_ms:
+                  description: Per-request timeout in milliseconds.
+                  type: integer
+                  default: 8000
+                  minimum: 1000
+                  maximum: 20000
+              required:
+              - url
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/http/assert:
+    get:
+      operationId: http_assert_get
+      summary: Verify a URL actually returns what you expected — status, headers, JSON values…
+      description: The difference between an agent believing it succeeded and knowing it did. http.check tells you a URL is alive; this tells you it is correct. Assert the status, response headers, values at JSONPath expressions, substrings in the body and a latency ceiling, and get back one boolean plus a per-check breakdown showing expected against actual. An agent that has just deployed, migrated or reconfigured something can prove the outcome rather than reporting the absence of an error, which is the usual way agents claim a success they have not actually achieved.
+      tags:
+      - Web
+      parameters:
+      - name: url
+        in: query
+        required: true
+        description: URL to call.
+        schema:
+          description: URL to call.
+          type: string
+          maxLength: 4000
+          examples:
+          - https://fluentedi.com/health
+      - name: method
+        in: query
+        required: false
+        description: HTTP method.
+        schema:
+          description: HTTP method.
+          type: string
+          enum:
+          - GET
+          - HEAD
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+          default: GET
+      - name: body
+        in: query
+        required: false
+        description: Request body for POST, PUT and PATCH.
+        schema:
+          description: Request body for POST, PUT and PATCH.
+          type: string
+          default: ''
+          maxLength: 100000
+      - name: headers
+        in: query
+        required: false
+        description: Request headers to send.
+        schema:
+          description: Request headers to send.
+          type: object
+          default: {}
+      - name: expect_status
+        in: query
+        required: false
+        description: 'Required status: a number, an array of acceptable numbers, or a class such as "2xx".'
+        schema:
+          description: 'Required status: a number, an array of acceptable numbers, or a class such as "2xx".'
+          default: ''
+      - name: expect_headers
+        in: query
+        required: false
+        description: Response headers that must exist and contain a substring, e.g. {"content-type":"json"}.
+        schema:
+          description: Response headers that must exist and contain a substring, e.g. {"content-type":"json"}.
+          type: object
+          default: {}
+      - name: expect_json
+        in: query
+        required: false
+        description: JSONPath expressions mapped to required values, e.g. {"$.status":"ok","$.items[0].id":1}.
+        schema:
+          description: JSONPath expressions mapped to required values, e.g. {"$.status":"ok","$.items[0].id":1}.
+          type: object
+          default: {}
+      - name: expect_body_contains
+        in: query
+        required: false
+        description: Substrings that must appear in the body.
+        schema:
+          description: Substrings that must appear in the body.
+          type: array
+          default: []
+          items:
+            type: string
+      - name: max_response_ms
+        in: query
+        required: false
+        description: Fail if the response takes longer than this. 0 disables the check.
+        schema:
+          description: Fail if the response takes longer than this. 0 disables the check.
+          type: integer
+          default: 0
+          minimum: 0
+          maximum: 30000
+      - name: timeout_ms
+        in: query
+        required: false
+        description: Request timeout.
+        schema:
+          description: Request timeout.
+          type: integer
+          default: 10000
+          minimum: 1000
+          maximum: 30000
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: http_assert_post
+      summary: Verify a URL actually returns what you expected — status, headers, JSON values…
+      description: The difference between an agent believing it succeeded and knowing it did. http.check tells you a URL is alive; this tells you it is correct. Assert the status, response headers, values at JSONPath expressions, substrings in the body and a latency ceiling, and get back one boolean plus a per-check breakdown showing expected against actual. An agent that has just deployed, migrated or reconfigured something can prove the outcome rather than reporting the absence of an error, which is the usual way agents claim a success they have not actually achieved.
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  description: URL to call.
+                  type: string
+                  maxLength: 4000
+                  examples:
+                  - https://fluentedi.com/health
+                method:
+                  description: HTTP method.
+                  type: string
+                  enum:
+                  - GET
+                  - HEAD
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                  - OPTIONS
+                  default: GET
+                body:
+                  description: Request body for POST, PUT and PATCH.
+                  type: string
+                  default: ''
+                  maxLength: 100000
+                headers:
+                  description: Request headers to send.
+                  type: object
+                  default: {}
+                expect_status:
+                  description: 'Required status: a number, an array of acceptable numbers, or a class such as "2xx".'
+                  default: ''
+                expect_headers:
+                  description: Response headers that must exist and contain a substring, e.g. {"content-type":"json"}.
+                  type: object
+                  default: {}
+                expect_json:
+                  description: JSONPath expressions mapped to required values, e.g. {"$.status":"ok","$.items[0].id":1}.
+                  type: object
+                  default: {}
+                expect_body_contains:
+                  description: Substrings that must appear in the body.
+                  type: array
+                  default: []
+                  items:
+                    type: string
+                max_response_ms:
+                  description: Fail if the response takes longer than this. 0 disables the check.
+                  type: integer
+                  default: 0
+                  minimum: 0
+                  maximum: 30000
+                timeout_ms:
+                  description: Request timeout.
+                  type: integer
+                  default: 10000
+                  minimum: 1000
+                  maximum: 30000
+              required:
+              - url
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/dns/lookup:
+    get:
+      operationId: dns_lookup_get
+      summary: Resolve DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA, CAA and more)
+      description: Queries public DNS over HTTPS and returns parsed records with their TTLs. Confirm where a domain actually points, read SPF/DKIM/DMARC policies out of TXT records, or check mail routing — live facts that no training corpus can supply because they change without notice.
+      tags:
+      - Web
+      parameters:
+      - name: name
+        in: query
+        required: true
+        description: Domain name to resolve.
+        schema:
+          description: Domain name to resolve.
+          type: string
+          maxLength: 253
+          examples:
+          - example.com
+      - name: type
+        in: query
+        required: false
+        description: DNS record type.
+        schema:
+          description: DNS record type.
+          type: string
+          enum:
+          - A
+          - AAAA
+          - CNAME
+          - MX
+          - TXT
+          - NS
+          - SOA
+          - CAA
+          - SRV
+          - PTR
+          - DNSKEY
+          - DS
+          default: A
+      - name: dnssec
+        in: query
+        required: false
+        description: Request DNSSEC validation.
+        schema:
+          description: Request DNSSEC validation.
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: dns_lookup_post
+      summary: Resolve DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA, CAA and more)
+      description: Queries public DNS over HTTPS and returns parsed records with their TTLs. Confirm where a domain actually points, read SPF/DKIM/DMARC policies out of TXT records, or check mail routing — live facts that no training corpus can supply because they change without notice.
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Domain name to resolve.
+                  type: string
+                  maxLength: 253
+                  examples:
+                  - example.com
+                type:
+                  description: DNS record type.
+                  type: string
+                  enum:
+                  - A
+                  - AAAA
+                  - CNAME
+                  - MX
+                  - TXT
+                  - NS
+                  - SOA
+                  - CAA
+                  - SRV
+                  - PTR
+                  - DNSKEY
+                  - DS
+                  default: A
+                dnssec:
+                  description: Request DNSSEC validation.
+                  type: boolean
+                  default: false
+              required:
+              - name
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/net/inspect:
+    get:
+      operationId: net_inspect_get
+      summary: Report the caller's IP, geolocation, network and TLS details as seen from the…
+      description: 'Returns what a server actually observes about the caller: source IP, country and city, ASN and network operator, the Cloudflare edge location that served the request, HTTP version and TLS cipher. Useful for confirming egress IP, diagnosing a geo-routing problem, or establishing an agent''s own network context.'
+      tags:
+      - Web
+      parameters:
+      - name: include_headers
+        in: query
+        required: false
+        description: Echo the request headers back (Authorization and Cookie are redacted).
+        schema:
+          description: Echo the request headers back (Authorization and Cookie are redacted).
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: net_inspect_post
+      summary: Report the caller's IP, geolocation, network and TLS details as seen from the…
+      description: 'Returns what a server actually observes about the caller: source IP, country and city, ASN and network operator, the Cloudflare edge location that served the request, HTTP version and TLS cipher. Useful for confirming egress IP, diagnosing a geo-routing problem, or establishing an agent''s own network context.'
+      tags:
+      - Web
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                include_headers:
+                  description: Echo the request headers back (Authorization and Cookie are redacted).
+                  type: boolean
+                  default: false
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/domain/lookup:
+    get:
+      operationId: domain_lookup_get
+      summary: 'WHOIS for a domain or IP: registration and expiry dates, registrar…'
+      description: 'Answers the questions WHOIS used to answer, over RDAP — the structured protocol the registries themselves now serve — with no key and no scraping: who registered a domain, when it expires, which registrar and nameservers it uses, whether transfers are locked, and whether DNSSEC is signed. Give it an IP address instead and it returns the owning network: name, CIDR range, and the responsible registry. A domain that does not resolve in RDAP is reported as likely available to register — an answer, not an error. These are live registry facts that no training corpus can supply: registrations, expiries and transfers happen daily, and an agent that guesses at them guesses wrong.'
+      tags:
+      - Web
+      parameters:
+      - name: query
+        in: query
+        required: true
+        description: Domain name or IP address to look up.
+        schema:
+          description: Domain name or IP address to look up.
+          type: string
+          maxLength: 253
+          examples:
+          - example.com
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: domain_lookup_post
+      summary: 'WHOIS for a domain or IP: registration and expiry dates, registrar…'
+      description: 'Answers the questions WHOIS used to answer, over RDAP — the structured protocol the registries themselves now serve — with no key and no scraping: who registered a domain, when it expires, which registrar and nameservers it uses, whether transfers are locked, and whether DNSSEC is signed. Give it an IP address instead and it returns the owning network: name, CIDR range, and the responsible registry. A domain that does not resolve in RDAP is reported as likely available to register — an answer, not an error. These are live registry facts that no training corpus can supply: registrations, expiries and transfers happen daily, and an agent that guesses at them guesses wrong.'
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  description: Domain name or IP address to look up.
+                  type: string
+                  maxLength: 253
+                  examples:
+                  - example.com
+              required:
+              - query
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/email/validate:
+    get:
+      operationId: email_validate_get
+      summary: 'Validate an email address: syntax, whether the domain can receive mail (MX)…'
+      description: 'Checks everything about an email address that can be checked without sending mail: RFC-practical syntax, whether the domain actually publishes MX records (or a null MX, which is an explicit refusal to receive), whether it is a known disposable inbox or a free consumer provider, whether the local part is a role account like info@ or billing@, and whether the domain is one keystroke from a major provider — gmial.com almost always means gmail.com. What it deliberately does not claim: that the mailbox exists. Only an SMTP conversation can test that, most servers lie to probes anyway, and a tool that answered "deliverable" would be guessing. Every signal returned here is verifiable.'
+      tags:
+      - Web
+      parameters:
+      - name: email
+        in: query
+        required: true
+        description: Email address to validate.
+        schema:
+          description: Email address to validate.
+          type: string
+          maxLength: 320
+          examples:
+          - ada@example.com
+      - name: check_dns
+        in: query
+        required: false
+        description: Also query the domain's MX records to confirm it can receive mail.
+        schema:
+          description: Also query the domain's MX records to confirm it can receive mail.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: email_validate_post
+      summary: 'Validate an email address: syntax, whether the domain can receive mail (MX)…'
+      description: 'Checks everything about an email address that can be checked without sending mail: RFC-practical syntax, whether the domain actually publishes MX records (or a null MX, which is an explicit refusal to receive), whether it is a known disposable inbox or a free consumer provider, whether the local part is a role account like info@ or billing@, and whether the domain is one keystroke from a major provider — gmial.com almost always means gmail.com. What it deliberately does not claim: that the mailbox exists. Only an SMTP conversation can test that, most servers lie to probes anyway, and a tool that answered "deliverable" would be guessing. Every signal returned here is verifiable.'
+      tags:
+      - Web
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: Email address to validate.
+                  type: string
+                  maxLength: 320
+                  examples:
+                  - ada@example.com
+                check_dns:
+                  description: Also query the domain's MX records to confirm it can receive mail.
+                  type: boolean
+                  default: true
+              required:
+              - email
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

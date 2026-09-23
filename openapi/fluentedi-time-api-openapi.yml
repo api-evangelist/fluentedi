@@ -1,0 +1,739 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Time API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Time
+  description: Time, dates and windows
+paths:
+  /v1/time/now:
+    get:
+      operationId: time_now_get
+      summary: Current date and time in any IANA timezone
+      description: 'Returns the authoritative current time in one or more timezones, with UTC offset, ISO week number, day of year, weekend flag, and daylight-saving state. Use this instead of guessing the date: a language model has no clock, and its training cutoff is not today.'
+      tags:
+      - Time
+      parameters:
+      - name: timezone
+        in: query
+        required: false
+        description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+        schema:
+          description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+          type: string
+          default: UTC
+          examples:
+          - America/New_York
+      - name: also
+        in: query
+        required: false
+        description: Additional timezones to report alongside the primary one.
+        schema:
+          description: Additional timezones to report alongside the primary one.
+          type: array
+          default: []
+          items:
+            type: string
+          examples:
+          - - Asia/Tokyo
+            - Europe/Berlin
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: time_now_post
+      summary: Current date and time in any IANA timezone
+      description: 'Returns the authoritative current time in one or more timezones, with UTC offset, ISO week number, day of year, weekend flag, and daylight-saving state. Use this instead of guessing the date: a language model has no clock, and its training cutoff is not today.'
+      tags:
+      - Time
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                timezone:
+                  description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+                  type: string
+                  default: UTC
+                  examples:
+                  - America/New_York
+                also:
+                  description: Additional timezones to report alongside the primary one.
+                  type: array
+                  default: []
+                  items:
+                    type: string
+                  examples:
+                  - - Asia/Tokyo
+                    - Europe/Berlin
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/time/convert:
+    get:
+      operationId: time_convert_get
+      summary: Convert a timestamp between timezones
+      description: Converts one instant into any number of timezones, handling daylight saving transitions correctly. Naive inputs (no Z or offset) are read as wall-clock time in `from`; inputs carrying an offset are absolute.
+      tags:
+      - Time
+      parameters:
+      - name: time
+        in: query
+        required: false
+        description: 'The instant to convert: ISO 8601, a naive wall-clock time, a unix timestamp, or "now".'
+        schema:
+          description: 'The instant to convert: ISO 8601, a naive wall-clock time, a unix timestamp, or "now".'
+          type: string
+          default: now
+          examples:
+          - '2026-08-22T14:30:00'
+      - name: from
+        in: query
+        required: false
+        description: Timezone the input is expressed in (used only when it carries no offset).
+        schema:
+          description: Timezone the input is expressed in (used only when it carries no offset).
+          type: string
+          default: UTC
+          examples:
+          - America/New_York
+      - name: to
+        in: query
+        required: true
+        description: Target timezones.
+        schema:
+          description: Target timezones.
+          type: array
+          default:
+          - UTC
+          items:
+            type: string
+          examples:
+          - - Asia/Tokyo
+            - America/New_York
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: time_convert_post
+      summary: Convert a timestamp between timezones
+      description: Converts one instant into any number of timezones, handling daylight saving transitions correctly. Naive inputs (no Z or offset) are read as wall-clock time in `from`; inputs carrying an offset are absolute.
+      tags:
+      - Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                time:
+                  description: 'The instant to convert: ISO 8601, a naive wall-clock time, a unix timestamp, or "now".'
+                  type: string
+                  default: now
+                  examples:
+                  - '2026-08-22T14:30:00'
+                from:
+                  description: Timezone the input is expressed in (used only when it carries no offset).
+                  type: string
+                  default: UTC
+                  examples:
+                  - America/New_York
+                to:
+                  description: Target timezones.
+                  type: array
+                  default:
+                  - UTC
+                  items:
+                    type: string
+                  examples:
+                  - - Asia/Tokyo
+                    - America/New_York
+              required:
+              - to
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/time/add:
+    get:
+      operationId: time_add_get
+      summary: Add or subtract a duration from a date, calendar-aware
+      description: Adds years, months, weeks, days, hours, minutes and seconds to an instant. Calendar units (years, months, weeks, days) move wall-clock time and clamp overflow — Jan 31 plus one month is Feb 28 or 29, never Mar 3. Clock units (hours, minutes, seconds) add exact elapsed time and therefore cross DST boundaries.
+      tags:
+      - Time
+      parameters:
+      - name: time
+        in: query
+        required: false
+        description: 'Starting instant: ISO 8601, unix timestamp, or "now".'
+        schema:
+          description: 'Starting instant: ISO 8601, unix timestamp, or "now".'
+          type: string
+          default: now
+      - name: timezone
+        in: query
+        required: false
+        description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+        schema:
+          description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+          type: string
+          default: UTC
+          examples:
+          - America/New_York
+      - name: years
+        in: query
+        required: false
+        description: Years to add (negative subtracts).
+        schema:
+          description: Years to add (negative subtracts).
+          type: integer
+          default: 0
+      - name: months
+        in: query
+        required: false
+        description: Months to add (negative subtracts). Day-of-month is clamped.
+        schema:
+          description: Months to add (negative subtracts). Day-of-month is clamped.
+          type: integer
+          default: 0
+      - name: weeks
+        in: query
+        required: false
+        description: Weeks to add (negative subtracts).
+        schema:
+          description: Weeks to add (negative subtracts).
+          type: integer
+          default: 0
+      - name: days
+        in: query
+        required: false
+        description: Calendar days to add (negative subtracts).
+        schema:
+          description: Calendar days to add (negative subtracts).
+          type: integer
+          default: 0
+      - name: hours
+        in: query
+        required: false
+        description: Exact hours to add (negative subtracts).
+        schema:
+          description: Exact hours to add (negative subtracts).
+          type: number
+          default: 0
+      - name: minutes
+        in: query
+        required: false
+        description: Exact minutes to add (negative subtracts).
+        schema:
+          description: Exact minutes to add (negative subtracts).
+          type: number
+          default: 0
+      - name: seconds
+        in: query
+        required: false
+        description: Exact seconds to add (negative subtracts).
+        schema:
+          description: Exact seconds to add (negative subtracts).
+          type: number
+          default: 0
+      - name: business_days
+        in: query
+        required: false
+        description: Weekdays to add, skipping Saturday and Sunday.
+        schema:
+          description: Weekdays to add, skipping Saturday and Sunday.
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: time_add_post
+      summary: Add or subtract a duration from a date, calendar-aware
+      description: Adds years, months, weeks, days, hours, minutes and seconds to an instant. Calendar units (years, months, weeks, days) move wall-clock time and clamp overflow — Jan 31 plus one month is Feb 28 or 29, never Mar 3. Clock units (hours, minutes, seconds) add exact elapsed time and therefore cross DST boundaries.
+      tags:
+      - Time
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                time:
+                  description: 'Starting instant: ISO 8601, unix timestamp, or "now".'
+                  type: string
+                  default: now
+                timezone:
+                  description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+                  type: string
+                  default: UTC
+                  examples:
+                  - America/New_York
+                years:
+                  description: Years to add (negative subtracts).
+                  type: integer
+                  default: 0
+                months:
+                  description: Months to add (negative subtracts). Day-of-month is clamped.
+                  type: integer
+                  default: 0
+                weeks:
+                  description: Weeks to add (negative subtracts).
+                  type: integer
+                  default: 0
+                days:
+                  description: Calendar days to add (negative subtracts).
+                  type: integer
+                  default: 0
+                hours:
+                  description: Exact hours to add (negative subtracts).
+                  type: number
+                  default: 0
+                minutes:
+                  description: Exact minutes to add (negative subtracts).
+                  type: number
+                  default: 0
+                seconds:
+                  description: Exact seconds to add (negative subtracts).
+                  type: number
+                  default: 0
+                business_days:
+                  description: Weekdays to add, skipping Saturday and Sunday.
+                  type: integer
+                  default: 0
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/time/diff:
+    get:
+      operationId: time_diff_get
+      summary: Duration between two dates, in every unit
+      description: 'Computes the elapsed time between two instants: exact totals in each unit, a calendar breakdown (years/months/days rather than ''thirteen and a half months''), the count of weekdays in between, and a human phrase. Negative when `to` precedes `from`.'
+      tags:
+      - Time
+      parameters:
+      - name: from
+        in: query
+        required: false
+        description: 'Start instant: ISO 8601, unix timestamp, or "now".'
+        schema:
+          description: 'Start instant: ISO 8601, unix timestamp, or "now".'
+          type: string
+          default: now
+          examples:
+          - '1990-05-14'
+      - name: to
+        in: query
+        required: false
+        description: 'End instant: ISO 8601, unix timestamp, or "now".'
+        schema:
+          description: 'End instant: ISO 8601, unix timestamp, or "now".'
+          type: string
+          default: now
+      - name: timezone
+        in: query
+        required: false
+        description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+        schema:
+          description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+          type: string
+          default: UTC
+          examples:
+          - America/New_York
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: time_diff_post
+      summary: Duration between two dates, in every unit
+      description: 'Computes the elapsed time between two instants: exact totals in each unit, a calendar breakdown (years/months/days rather than ''thirteen and a half months''), the count of weekdays in between, and a human phrase. Negative when `to` precedes `from`.'
+      tags:
+      - Time
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from:
+                  description: 'Start instant: ISO 8601, unix timestamp, or "now".'
+                  type: string
+                  default: now
+                  examples:
+                  - '1990-05-14'
+                to:
+                  description: 'End instant: ISO 8601, unix timestamp, or "now".'
+                  type: string
+                  default: now
+                timezone:
+                  description: IANA timezone identifier, e.g. "UTC", "America/New_York", "Asia/Kolkata", "Europe/London".
+                  type: string
+                  default: UTC
+                  examples:
+                  - America/New_York
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/time/window:
+    get:
+      operationId: time_window_get
+      summary: Test whether an instant falls inside a time window, and by how much it misses
+      description: 'Answers the questions a deadline actually poses: is this instant inside the window, how long until it opens or closes, and if it is outside, by how much. Optionally compares two windows for overlap. A window comparison that silently succeeds against the wrong bounds is a failure mode that does not raise an error anywhere — the ship window is missed, or the ASN is late, and the only symptom is a chargeback later. This computes the boundary instead of assuming it.'
+      tags:
+      - Time
+      parameters:
+      - name: start
+        in: query
+        required: true
+        description: 'Window opens at this instant: ISO 8601, unix timestamp, or "now".'
+        schema:
+          description: 'Window opens at this instant: ISO 8601, unix timestamp, or "now".'
+          type: string
+          examples:
+          - '2026-08-24T09:00:00Z'
+      - name: end
+        in: query
+        required: false
+        description: Window closes at this instant. Omit if using `duration_hours`.
+        schema:
+          description: Window closes at this instant. Omit if using `duration_hours`.
+          type: string
+          default: ''
+      - name: duration_hours
+        in: query
+        required: false
+        description: Window length in hours, used when `end` is omitted.
+        schema:
+          description: Window length in hours, used when `end` is omitted.
+          type: number
+          default: 0
+      - name: instant
+        in: query
+        required: false
+        description: The instant to test against the window.
+        schema:
+          description: The instant to test against the window.
+          type: string
+          default: now
+      - name: timezone
+        in: query
+        required: false
+        description: IANA timezone used to read naive inputs and render output.
+        schema:
+          description: IANA timezone used to read naive inputs and render output.
+          type: string
+          default: UTC
+          examples:
+          - America/New_York
+      - name: compare_start
+        in: query
+        required: false
+        description: Start of a second window, to test for overlap with the first.
+        schema:
+          description: Start of a second window, to test for overlap with the first.
+          type: string
+          default: ''
+      - name: compare_end
+        in: query
+        required: false
+        description: End of the second window.
+        schema:
+          description: End of the second window.
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: time_window_post
+      summary: Test whether an instant falls inside a time window, and by how much it misses
+      description: 'Answers the questions a deadline actually poses: is this instant inside the window, how long until it opens or closes, and if it is outside, by how much. Optionally compares two windows for overlap. A window comparison that silently succeeds against the wrong bounds is a failure mode that does not raise an error anywhere — the ship window is missed, or the ASN is late, and the only symptom is a chargeback later. This computes the boundary instead of assuming it.'
+      tags:
+      - Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start:
+                  description: 'Window opens at this instant: ISO 8601, unix timestamp, or "now".'
+                  type: string
+                  examples:
+                  - '2026-08-24T09:00:00Z'
+                end:
+                  description: Window closes at this instant. Omit if using `duration_hours`.
+                  type: string
+                  default: ''
+                duration_hours:
+                  description: Window length in hours, used when `end` is omitted.
+                  type: number
+                  default: 0
+                instant:
+                  description: The instant to test against the window.
+                  type: string
+                  default: now
+                timezone:
+                  description: IANA timezone used to read naive inputs and render output.
+                  type: string
+                  default: UTC
+                  examples:
+                  - America/New_York
+                compare_start:
+                  description: Start of a second window, to test for overlap with the first.
+                  type: string
+                  default: ''
+                compare_end:
+                  description: End of the second window.
+                  type: string
+                  default: ''
+              required:
+              - start
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/time/zones:
+    get:
+      operationId: time_zones_get
+      summary: List or search IANA timezone identifiers with current offsets
+      description: Every IANA timezone the runtime supports, with its current UTC offset and local time. Search by city, region or offset to resolve a vague location like "Bangalore" to a valid identifier before calling other time tools.
+      tags:
+      - Time
+      parameters:
+      - name: search
+        in: query
+        required: false
+        description: Case-insensitive substring filter, e.g. "kolkata", "america/", "+05:30".
+        schema:
+          description: Case-insensitive substring filter, e.g. "kolkata", "america/", "+05:30".
+          type: string
+          default: ''
+      - name: limit
+        in: query
+        required: false
+        description: Maximum results to return.
+        schema:
+          description: Maximum results to return.
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 700
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: time_zones_post
+      summary: List or search IANA timezone identifiers with current offsets
+      description: Every IANA timezone the runtime supports, with its current UTC offset and local time. Search by city, region or offset to resolve a vague location like "Bangalore" to a valid identifier before calling other time tools.
+      tags:
+      - Time
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search:
+                  description: Case-insensitive substring filter, e.g. "kolkata", "america/", "+05:30".
+                  type: string
+                  default: ''
+                limit:
+                  description: Maximum results to return.
+                  type: integer
+                  default: 50
+                  minimum: 1
+                  maximum: 700
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

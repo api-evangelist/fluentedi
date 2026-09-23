@@ -1,0 +1,687 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Edi API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Edi
+  description: EDI and retail supply chain (X12)
+paths:
+  /v1/edi/parse:
+    get:
+      operationId: edi_parse_get
+      summary: Parse an X12 EDI document (850, 856, 810, 855, 997 and others) into structured…
+      description: 'Reads a raw ASC X12 interchange and returns it as JSON: delimiters taken from the ISA header, the ISA/GS/ST envelope decoded, every segment split into named elements, and a document-specific summary - purchase order lines for an 850, the HL shipment hierarchy and SSCCs for an 856, invoice totals for an 810. EDI is positional and delimiter-sensitive, and unreadable without a spec table; reading it by inspection produces confident nonsense, which is why this is a tool rather than a prompt.'
+      tags:
+      - Edi
+      parameters:
+      - name: input
+        in: query
+        required: true
+        description: Raw X12 EDI text, beginning with ISA where available.
+        schema:
+          description: Raw X12 EDI text, beginning with ISA where available.
+          type: string
+          maxLength: 2000000
+      - name: include_segments
+        in: query
+        required: false
+        description: Include the flat segment list alongside the summary.
+        schema:
+          description: Include the flat segment list alongside the summary.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: edi_parse_post
+      summary: Parse an X12 EDI document (850, 856, 810, 855, 997 and others) into structured…
+      description: 'Reads a raw ASC X12 interchange and returns it as JSON: delimiters taken from the ISA header, the ISA/GS/ST envelope decoded, every segment split into named elements, and a document-specific summary - purchase order lines for an 850, the HL shipment hierarchy and SSCCs for an 856, invoice totals for an 810. EDI is positional and delimiter-sensitive, and unreadable without a spec table; reading it by inspection produces confident nonsense, which is why this is a tool rather than a prompt.'
+      tags:
+      - Edi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  description: Raw X12 EDI text, beginning with ISA where available.
+                  type: string
+                  maxLength: 2000000
+                include_segments:
+                  description: Include the flat segment list alongside the summary.
+                  type: boolean
+                  default: true
+              required:
+              - input
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/edi/validate:
+    get:
+      operationId: edi_validate_get
+      summary: Check an X12 document's envelope integrity and 856 HL hierarchy for the errors…
+      description: 'Runs the structural checks a trading partner runs before rejecting a file: control numbers matching between the ISA/IEA, GS/GE and ST/SE header and trailer pairs, declared counts matching actual counts, and - for an 856 - the HL hierarchy. HL faults are the usual cause of ASN rejections and chargebacks: a parent ID naming no existing node, a duplicate HL01, an unknown level code, a missing carton level. Every finding names the segment and states what the value should have been.'
+      tags:
+      - Edi
+      parameters:
+      - name: input
+        in: query
+        required: true
+        description: Raw X12 EDI text.
+        schema:
+          description: Raw X12 EDI text.
+          type: string
+          maxLength: 2000000
+      - name: require_levels
+        in: query
+        required: false
+        description: HL level codes that must be present in an 856, e.g. ["S","O","P","I"] for a pack-level ASN.
+        schema:
+          description: HL level codes that must be present in an 856, e.g. ["S","O","P","I"] for a pack-level ASN.
+          type: array
+          default: []
+          items:
+            type: string
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: edi_validate_post
+      summary: Check an X12 document's envelope integrity and 856 HL hierarchy for the errors…
+      description: 'Runs the structural checks a trading partner runs before rejecting a file: control numbers matching between the ISA/IEA, GS/GE and ST/SE header and trailer pairs, declared counts matching actual counts, and - for an 856 - the HL hierarchy. HL faults are the usual cause of ASN rejections and chargebacks: a parent ID naming no existing node, a duplicate HL01, an unknown level code, a missing carton level. Every finding names the segment and states what the value should have been.'
+      tags:
+      - Edi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  description: Raw X12 EDI text.
+                  type: string
+                  maxLength: 2000000
+                require_levels:
+                  description: HL level codes that must be present in an 856, e.g. ["S","O","P","I"] for a pack-level ASN.
+                  type: array
+                  default: []
+                  items:
+                    type: string
+              required:
+              - input
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/edi/build:
+    get:
+      operationId: edi_build_get
+      summary: Generate a valid X12 856 ASN or 850 purchase order from JSON, with correct HL…
+      description: 'Compiles structured JSON into standards-valid X12. The parts that get documents rejected are exactly the parts a language model cannot hold in its head: the 856 hierarchy needs sequential HL IDs where every level names its parent''s ID, and on a multi-carton, multi-SKU shipment that bookkeeping goes wrong silently. The ISA header is fixed-width — 106 characters exactly, every element space-padded to size — and one character out crashes the receiver''s translator. Segment counts in SE01, CTT01, GE01 and IEA01 must agree with what was actually emitted. All of that is computed here rather than written by hand.'
+      tags:
+      - Edi
+      parameters:
+      - name: document
+        in: query
+        required: false
+        description: Transaction set to build.
+        schema:
+          description: Transaction set to build.
+          type: string
+          enum:
+          - '856'
+          - '850'
+          default: '856'
+      - name: data
+        in: query
+        required: true
+        description: 'Document content. For 856: {shipment_id, ship_date, orders:[{po_number, packs:[{sscc, items:[{upc, quantity, unit}]}]}], parties:[{role,name,id}]}. For 850: {po_number, order_date, lines:[{quantity, unit, unit_price, upc, description}], parties:[...]}.'
+        schema:
+          description: 'Document content. For 856: {shipment_id, ship_date, orders:[{po_number, packs:[{sscc, items:[{upc, quantity, unit}]}]}], parties:[{role,name,id}]}. For 850: {po_number, order_date, lines:[{quantity, unit, unit_price, upc, description}], parties:[...]}.'
+          type: object
+      - name: sender_id
+        in: query
+        required: false
+        description: ISA06 sender identifier.
+        schema:
+          description: ISA06 sender identifier.
+          type: string
+          default: SENDER
+          maxLength: 15
+      - name: receiver_id
+        in: query
+        required: false
+        description: ISA08 receiver identifier.
+        schema:
+          description: ISA08 receiver identifier.
+          type: string
+          default: RECEIVER
+          maxLength: 15
+      - name: sender_qualifier
+        in: query
+        required: false
+        description: ISA05 qualifier, e.g. ZZ, 01 (DUNS), 12 (phone).
+        schema:
+          description: ISA05 qualifier, e.g. ZZ, 01 (DUNS), 12 (phone).
+          type: string
+          default: ZZ
+          maxLength: 2
+      - name: receiver_qualifier
+        in: query
+        required: false
+        description: ISA07 qualifier.
+        schema:
+          description: ISA07 qualifier.
+          type: string
+          default: ZZ
+          maxLength: 2
+      - name: control_number
+        in: query
+        required: false
+        description: Interchange control number (ISA13). Also seeds GS06 and ST02.
+        schema:
+          description: Interchange control number (ISA13). Also seeds GS06 and ST02.
+          type: integer
+          default: 1
+          minimum: 1
+      - name: test_indicator
+        in: query
+        required: false
+        description: Mark the interchange as test (ISA15 = T) rather than production (P).
+        schema:
+          description: Mark the interchange as test (ISA15 = T) rather than production (P).
+          type: boolean
+          default: true
+      - name: timestamp
+        in: query
+        required: false
+        description: ISO instant for the envelope date/time. Defaults to now.
+        schema:
+          description: ISO instant for the envelope date/time. Defaults to now.
+          type: string
+          default: ''
+      - name: include_envelope
+        in: query
+        required: false
+        description: Wrap the transaction set in ISA/GS ... GE/IEA.
+        schema:
+          description: Wrap the transaction set in ISA/GS ... GE/IEA.
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: edi_build_post
+      summary: Generate a valid X12 856 ASN or 850 purchase order from JSON, with correct HL…
+      description: 'Compiles structured JSON into standards-valid X12. The parts that get documents rejected are exactly the parts a language model cannot hold in its head: the 856 hierarchy needs sequential HL IDs where every level names its parent''s ID, and on a multi-carton, multi-SKU shipment that bookkeeping goes wrong silently. The ISA header is fixed-width — 106 characters exactly, every element space-padded to size — and one character out crashes the receiver''s translator. Segment counts in SE01, CTT01, GE01 and IEA01 must agree with what was actually emitted. All of that is computed here rather than written by hand.'
+      tags:
+      - Edi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                document:
+                  description: Transaction set to build.
+                  type: string
+                  enum:
+                  - '856'
+                  - '850'
+                  default: '856'
+                data:
+                  description: 'Document content. For 856: {shipment_id, ship_date, orders:[{po_number, packs:[{sscc, items:[{upc, quantity, unit}]}]}], parties:[{role,name,id}]}. For 850: {po_number, order_date, lines:[{quantity, unit, unit_price, upc, description}], parties:[...]}.'
+                  type: object
+                sender_id:
+                  description: ISA06 sender identifier.
+                  type: string
+                  default: SENDER
+                  maxLength: 15
+                receiver_id:
+                  description: ISA08 receiver identifier.
+                  type: string
+                  default: RECEIVER
+                  maxLength: 15
+                sender_qualifier:
+                  description: ISA05 qualifier, e.g. ZZ, 01 (DUNS), 12 (phone).
+                  type: string
+                  default: ZZ
+                  maxLength: 2
+                receiver_qualifier:
+                  description: ISA07 qualifier.
+                  type: string
+                  default: ZZ
+                  maxLength: 2
+                control_number:
+                  description: Interchange control number (ISA13). Also seeds GS06 and ST02.
+                  type: integer
+                  default: 1
+                  minimum: 1
+                test_indicator:
+                  description: Mark the interchange as test (ISA15 = T) rather than production (P).
+                  type: boolean
+                  default: true
+                timestamp:
+                  description: ISO instant for the envelope date/time. Defaults to now.
+                  type: string
+                  default: ''
+                include_envelope:
+                  description: Wrap the transaction set in ISA/GS ... GE/IEA.
+                  type: boolean
+                  default: true
+              required:
+              - data
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/edi/acknowledge:
+    get:
+      operationId: edi_acknowledge_get
+      summary: Read a 997 or 999 acknowledgment and say which documents were accepted, which…
+      description: 'Decodes a Functional Acknowledgment into an answer rather than a code. A 997 reports its verdict as bare letters and numbers — AK5 of R with error 5, AK3 of 7, AK4 element 2 code 7 — which say nothing without a code table. This resolves every one into plain language, points at the failing segment position and element, and, if you supply the control numbers you sent, reconciles them so you can see what was acknowledged, what was rejected, and what never came back at all. Silence is the failure mode that costs money: an unacknowledged document is not a delivered one.'
+      tags:
+      - Edi
+      parameters:
+      - name: input
+        in: query
+        required: true
+        description: Raw 997 or 999 acknowledgment text.
+        schema:
+          description: Raw 997 or 999 acknowledgment text.
+          type: string
+          maxLength: 500000
+      - name: sent
+        in: query
+        required: false
+        description: Transaction set control numbers you sent (ST02 values), to reconcile against. e.g. ["0001","0002"].
+        schema:
+          description: Transaction set control numbers you sent (ST02 values), to reconcile against. e.g. ["0001","0002"].
+          type: array
+          default: []
+          items:
+            type: string
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: edi_acknowledge_post
+      summary: Read a 997 or 999 acknowledgment and say which documents were accepted, which…
+      description: 'Decodes a Functional Acknowledgment into an answer rather than a code. A 997 reports its verdict as bare letters and numbers — AK5 of R with error 5, AK3 of 7, AK4 element 2 code 7 — which say nothing without a code table. This resolves every one into plain language, points at the failing segment position and element, and, if you supply the control numbers you sent, reconciles them so you can see what was acknowledged, what was rejected, and what never came back at all. Silence is the failure mode that costs money: an unacknowledged document is not a delivered one.'
+      tags:
+      - Edi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  description: Raw 997 or 999 acknowledgment text.
+                  type: string
+                  maxLength: 500000
+                sent:
+                  description: Transaction set control numbers you sent (ST02 values), to reconcile against. e.g. ["0001","0002"].
+                  type: array
+                  default: []
+                  items:
+                    type: string
+              required:
+              - input
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/gs1/checkdigit:
+    get:
+      operationId: gs1_checkdigit_get
+      summary: Calculate or validate a GS1 mod-10 check digit for SSCC-18, GTIN-14/13/12/8 and…
+      description: 'Computes the GS1 mod-10 check digit, or validates a complete code and says what the digit should have been. Also catches the failure behind most real-world barcode and ASN mismatches: a spreadsheet dropping leading zeros or rendering the identifier in scientific notation, silently changing it. Pass a full code to validate, or the payload without its final digit to compute one.'
+      tags:
+      - Edi
+      parameters:
+      - name: code
+        in: query
+        required: true
+        description: The code, with or without its check digit. Spaces and hyphens are ignored.
+        schema:
+          description: The code, with or without its check digit. Spaces and hyphens are ignored.
+          type: string
+          maxLength: 64
+          examples:
+          - 00614141123456789
+      - name: length
+        in: query
+        required: false
+        description: Expected total length (8, 12, 13, 14 or 18). Inferred when omitted.
+        schema:
+          description: Expected total length (8, 12, 13, 14 or 18). Inferred when omitted.
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: gs1_checkdigit_post
+      summary: Calculate or validate a GS1 mod-10 check digit for SSCC-18, GTIN-14/13/12/8 and…
+      description: 'Computes the GS1 mod-10 check digit, or validates a complete code and says what the digit should have been. Also catches the failure behind most real-world barcode and ASN mismatches: a spreadsheet dropping leading zeros or rendering the identifier in scientific notation, silently changing it. Pass a full code to validate, or the payload without its final digit to compute one.'
+      tags:
+      - Edi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  description: The code, with or without its check digit. Spaces and hyphens are ignored.
+                  type: string
+                  maxLength: 64
+                  examples:
+                  - 00614141123456789
+                length:
+                  description: Expected total length (8, 12, 13, 14 or 18). Inferred when omitted.
+                  type: integer
+                  default: 0
+              required:
+              - code
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/id/validate:
+    get:
+      operationId: id_validate_get
+      summary: 'Validate an identifier''s checksum: IBAN, card, ISBN, ISSN, ISIN, CUSIP, LEI…'
+      description: Runs the real check algorithm for twenty-odd identifier schemes and says both whether it passes and what passing does not prove — which is usually the more useful half. A valid IBAN checksum does not mean the account exists; a lapsed LEI passes forever; one in ten random digit strings satisfies Luhn. Schemes with no checksum at all (BIC, IFSC, DOI, and India's PAN, whose algorithm has never been published) are reported as structure-only rather than dressed up as verified. Pass `scheme` or let it infer from shape.
+      tags:
+      - Edi
+      parameters:
+      - name: value
+        in: query
+        required: true
+        description: The identifier to check. Spaces, hyphens and dots are ignored.
+        schema:
+          description: The identifier to check. Spaces, hyphens and dots are ignored.
+          type: string
+          maxLength: 200
+          examples:
+          - GB82WEST12345698765432
+      - name: scheme
+        in: query
+        required: false
+        description: Which scheme to apply. "auto" infers it from the shape.
+        schema:
+          description: Which scheme to apply. "auto" infers it from the shape.
+          type: string
+          enum:
+          - auto
+          - iban
+          - card
+          - luhn
+          - isbn
+          - isbn10
+          - isbn13
+          - issn
+          - isin
+          - cusip
+          - lei
+          - aba
+          - imei
+          - orcid
+          - isni
+          - ean8
+          - ean13
+          - gtin
+          - upce
+          - vin
+          - gstin
+          - pan
+          - ifsc
+          - bic
+          - doi
+          - verhoeff
+          default: auto
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: id_validate_post
+      summary: 'Validate an identifier''s checksum: IBAN, card, ISBN, ISSN, ISIN, CUSIP, LEI…'
+      description: Runs the real check algorithm for twenty-odd identifier schemes and says both whether it passes and what passing does not prove — which is usually the more useful half. A valid IBAN checksum does not mean the account exists; a lapsed LEI passes forever; one in ten random digit strings satisfies Luhn. Schemes with no checksum at all (BIC, IFSC, DOI, and India's PAN, whose algorithm has never been published) are reported as structure-only rather than dressed up as verified. Pass `scheme` or let it infer from shape.
+      tags:
+      - Edi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  description: The identifier to check. Spaces, hyphens and dots are ignored.
+                  type: string
+                  maxLength: 200
+                  examples:
+                  - GB82WEST12345698765432
+                scheme:
+                  description: Which scheme to apply. "auto" infers it from the shape.
+                  type: string
+                  enum:
+                  - auto
+                  - iban
+                  - card
+                  - luhn
+                  - isbn
+                  - isbn10
+                  - isbn13
+                  - issn
+                  - isin
+                  - cusip
+                  - lei
+                  - aba
+                  - imei
+                  - orcid
+                  - isni
+                  - ean8
+                  - ean13
+                  - gtin
+                  - upce
+                  - vin
+                  - gstin
+                  - pan
+                  - ifsc
+                  - bic
+                  - doi
+                  - verhoeff
+                  default: auto
+              required:
+              - value
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

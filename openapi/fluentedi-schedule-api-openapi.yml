@@ -1,0 +1,133 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Schedule API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Schedule
+  description: Scheduling
+paths:
+  /v1/cron/next:
+    get:
+      operationId: cron_next_get
+      summary: Validate a cron expression, explain it in English, and list its next run times
+      description: Parses a standard 5-field cron expression (or 6-field with leading seconds, or a macro like @daily), validates it, describes it in plain English, and computes the next run times in a given timezone with daylight-saving handled. Use it before writing a schedule to config — cron's day-of-month/day-of-week OR-semantics and step syntax are a common source of silently wrong schedules.
+      tags:
+      - Schedule
+      parameters:
+      - name: expression
+        in: query
+        required: true
+        description: Cron expression, e.g. "*/15 * * * *", "0 9 * * 1-5", "@daily".
+        schema:
+          description: Cron expression, e.g. "*/15 * * * *", "0 9 * * 1-5", "@daily".
+          type: string
+          maxLength: 200
+          examples:
+          - 0 9 * * 1-5
+      - name: timezone
+        in: query
+        required: false
+        description: IANA timezone the schedule runs in.
+        schema:
+          description: IANA timezone the schedule runs in.
+          type: string
+          default: UTC
+          examples:
+          - America/New_York
+      - name: count
+        in: query
+        required: false
+        description: How many upcoming run times to return.
+        schema:
+          description: How many upcoming run times to return.
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 100
+      - name: from
+        in: query
+        required: false
+        description: Compute run times after this instant instead of now.
+        schema:
+          description: Compute run times after this instant instead of now.
+          type: string
+          default: now
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: cron_next_post
+      summary: Validate a cron expression, explain it in English, and list its next run times
+      description: Parses a standard 5-field cron expression (or 6-field with leading seconds, or a macro like @daily), validates it, describes it in plain English, and computes the next run times in a given timezone with daylight-saving handled. Use it before writing a schedule to config — cron's day-of-month/day-of-week OR-semantics and step syntax are a common source of silently wrong schedules.
+      tags:
+      - Schedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expression:
+                  description: Cron expression, e.g. "*/15 * * * *", "0 9 * * 1-5", "@daily".
+                  type: string
+                  maxLength: 200
+                  examples:
+                  - 0 9 * * 1-5
+                timezone:
+                  description: IANA timezone the schedule runs in.
+                  type: string
+                  default: UTC
+                  examples:
+                  - America/New_York
+                count:
+                  description: How many upcoming run times to return.
+                  type: integer
+                  default: 5
+                  minimum: 1
+                  maximum: 100
+                from:
+                  description: Compute run times after this instant instead of now.
+                  type: string
+                  default: now
+              required:
+              - expression
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

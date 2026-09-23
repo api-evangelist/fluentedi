@@ -1,0 +1,468 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Compute API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Compute
+  description: Calculation and conversion
+paths:
+  /v1/math/eval:
+    get:
+      operationId: math_eval_get
+      summary: Evaluate a mathematical expression exactly
+      description: Evaluates arithmetic with correct operator precedence, parentheses, exponentiation, factorials, named variables and 30+ functions. Language models perform arithmetic by pattern-matching and quietly get long multiplications and compounding wrong; this computes the number instead of predicting it.
+      tags:
+      - Compute
+      parameters:
+      - name: expression
+        in: query
+        required: true
+        description: Expression to evaluate, e.g. "(1+0.07)^30 * 1000".
+        schema:
+          description: Expression to evaluate, e.g. "(1+0.07)^30 * 1000".
+          type: string
+          maxLength: 2000
+          examples:
+          - sqrt(2) * 10^3
+      - name: variables
+        in: query
+        required: false
+        description: 'Named values usable in the expression, e.g. {"rate": 0.07}.'
+        schema:
+          description: 'Named values usable in the expression, e.g. {"rate": 0.07}.'
+          type: object
+          default: {}
+      - name: precision
+        in: query
+        required: false
+        description: Decimal places to round the formatted result to.
+        schema:
+          description: Decimal places to round the formatted result to.
+          type: integer
+          default: 10
+          minimum: 0
+          maximum: 15
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: math_eval_post
+      summary: Evaluate a mathematical expression exactly
+      description: Evaluates arithmetic with correct operator precedence, parentheses, exponentiation, factorials, named variables and 30+ functions. Language models perform arithmetic by pattern-matching and quietly get long multiplications and compounding wrong; this computes the number instead of predicting it.
+      tags:
+      - Compute
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expression:
+                  description: Expression to evaluate, e.g. "(1+0.07)^30 * 1000".
+                  type: string
+                  maxLength: 2000
+                  examples:
+                  - sqrt(2) * 10^3
+                variables:
+                  description: 'Named values usable in the expression, e.g. {"rate": 0.07}.'
+                  type: object
+                  default: {}
+                precision:
+                  description: Decimal places to round the formatted result to.
+                  type: integer
+                  default: 10
+                  minimum: 0
+                  maximum: 15
+              required:
+              - expression
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/unit/convert:
+    get:
+      operationId: unit_convert_get
+      summary: Convert between units of length, mass, temperature, data, time, speed, area…
+      description: Exact unit conversion across eleven categories, using defined conversion factors rather than remembered approximations. Temperature handles offsets correctly (0°C is 32°F, not 0°F), and binary data prefixes are kept distinct from decimal ones (a GiB is not a GB).
+      tags:
+      - Compute
+      parameters:
+      - name: value
+        in: query
+        required: false
+        description: Quantity to convert.
+        schema:
+          description: Quantity to convert.
+          type: number
+          examples:
+          - 100
+      - name: from
+        in: query
+        required: false
+        description: Source unit, e.g. "km", "celsius", "gib".
+        schema:
+          description: Source unit, e.g. "km", "celsius", "gib".
+          type: string
+          examples:
+          - km
+      - name: to
+        in: query
+        required: false
+        description: Target unit. Must be in the same category as `from`.
+        schema:
+          description: Target unit. Must be in the same category as `from`.
+          type: string
+          examples:
+          - mi
+      - name: list
+        in: query
+        required: false
+        description: Return every supported unit grouped by category instead of converting.
+        schema:
+          description: Return every supported unit grouped by category instead of converting.
+          type: boolean
+          default: false
+      - name: precision
+        in: query
+        required: false
+        description: Decimal places in the rounded result.
+        schema:
+          description: Decimal places in the rounded result.
+          type: integer
+          default: 6
+          minimum: 0
+          maximum: 15
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: unit_convert_post
+      summary: Convert between units of length, mass, temperature, data, time, speed, area…
+      description: Exact unit conversion across eleven categories, using defined conversion factors rather than remembered approximations. Temperature handles offsets correctly (0°C is 32°F, not 0°F), and binary data prefixes are kept distinct from decimal ones (a GiB is not a GB).
+      tags:
+      - Compute
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  description: Quantity to convert.
+                  type: number
+                  examples:
+                  - 100
+                from:
+                  description: Source unit, e.g. "km", "celsius", "gib".
+                  type: string
+                  examples:
+                  - km
+                to:
+                  description: Target unit. Must be in the same category as `from`.
+                  type: string
+                  examples:
+                  - mi
+                list:
+                  description: Return every supported unit grouped by category instead of converting.
+                  type: boolean
+                  default: false
+                precision:
+                  description: Decimal places in the rounded result.
+                  type: integer
+                  default: 6
+                  minimum: 0
+                  maximum: 15
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/color/convert:
+    get:
+      operationId: color_convert_get
+      summary: Convert a colour between hex, RGB, HSL and OKLCh, and check WCAG contrast
+      description: Parses any CSS colour notation and re-emits it in every format including OKLCh. Supply `against` to get the WCAG 2.1 contrast ratio and pass/fail verdicts for normal and large text — the check that decides whether an interface is legible, computed rather than eyeballed.
+      tags:
+      - Compute
+      parameters:
+      - name: color
+        in: query
+        required: true
+        description: Colour in hex, rgb(), hsl(), or a CSS name.
+        schema:
+          description: Colour in hex, rgb(), hsl(), or a CSS name.
+          type: string
+          maxLength: 100
+          examples:
+          - '#3b82f6'
+      - name: against
+        in: query
+        required: false
+        description: Optional second colour to compute a WCAG contrast ratio against.
+        schema:
+          description: Optional second colour to compute a WCAG contrast ratio against.
+          type: string
+          default: ''
+          maxLength: 100
+          examples:
+          - '#ffffff'
+      - name: shades
+        in: query
+        required: false
+        description: Also return a 50-950 lightness scale built from this hue.
+        schema:
+          description: Also return a 50-950 lightness scale built from this hue.
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: color_convert_post
+      summary: Convert a colour between hex, RGB, HSL and OKLCh, and check WCAG contrast
+      description: Parses any CSS colour notation and re-emits it in every format including OKLCh. Supply `against` to get the WCAG 2.1 contrast ratio and pass/fail verdicts for normal and large text — the check that decides whether an interface is legible, computed rather than eyeballed.
+      tags:
+      - Compute
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                color:
+                  description: Colour in hex, rgb(), hsl(), or a CSS name.
+                  type: string
+                  maxLength: 100
+                  examples:
+                  - '#3b82f6'
+                against:
+                  description: Optional second colour to compute a WCAG contrast ratio against.
+                  type: string
+                  default: ''
+                  maxLength: 100
+                  examples:
+                  - '#ffffff'
+                shades:
+                  description: Also return a 50-950 lightness scale built from this hue.
+                  type: boolean
+                  default: false
+              required:
+              - color
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/money/convert:
+    get:
+      operationId: money_convert_get
+      summary: Convert between 30 currencies at current or historical European Central Bank…
+      description: 'Converts an amount between currencies using the European Central Bank''s daily reference rates — the closest thing to a neutral, citable exchange rate that exists, reaching back to 1999 for historical dates. Exchange rates are the canonical example of a fact a language model cannot know: they moved after every training cutoff and will move again tomorrow. Rates are published on ECB working days around 16:00 CET; a weekend or holiday query returns the last working day''s rate, and the response always states which date the rate is actually from. These are reference rates for calculation and record-keeping — a bank or card network will apply its own spread on a real transaction.'
+      tags:
+      - Compute
+      parameters:
+      - name: amount
+        in: query
+        required: false
+        description: Amount to convert.
+        schema:
+          description: Amount to convert.
+          type: number
+          default: 1
+          minimum: 0
+          examples:
+          - 250
+      - name: from
+        in: query
+        required: true
+        description: ISO 4217 code of the source currency.
+        schema:
+          description: ISO 4217 code of the source currency.
+          type: string
+          maxLength: 10
+          examples:
+          - USD
+      - name: to
+        in: query
+        required: false
+        description: Target currency code, or several separated by commas. Empty returns every supported currency.
+        schema:
+          description: Target currency code, or several separated by commas. Empty returns every supported currency.
+          type: string
+          default: ''
+          maxLength: 200
+      - name: date
+        in: query
+        required: false
+        description: Historical date (YYYY-MM-DD, back to 1999-01-04). Empty means the latest published rate.
+        schema:
+          description: Historical date (YYYY-MM-DD, back to 1999-01-04). Empty means the latest published rate.
+          type: string
+          default: ''
+          maxLength: 10
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: money_convert_post
+      summary: Convert between 30 currencies at current or historical European Central Bank…
+      description: 'Converts an amount between currencies using the European Central Bank''s daily reference rates — the closest thing to a neutral, citable exchange rate that exists, reaching back to 1999 for historical dates. Exchange rates are the canonical example of a fact a language model cannot know: they moved after every training cutoff and will move again tomorrow. Rates are published on ECB working days around 16:00 CET; a weekend or holiday query returns the last working day''s rate, and the response always states which date the rate is actually from. These are reference rates for calculation and record-keeping — a bank or card network will apply its own spread on a real transaction.'
+      tags:
+      - Compute
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  description: Amount to convert.
+                  type: number
+                  default: 1
+                  minimum: 0
+                  examples:
+                  - 250
+                from:
+                  description: ISO 4217 code of the source currency.
+                  type: string
+                  maxLength: 10
+                  examples:
+                  - USD
+                to:
+                  description: Target currency code, or several separated by commas. Empty returns every supported currency.
+                  type: string
+                  default: ''
+                  maxLength: 200
+                date:
+                  description: Historical date (YYYY-MM-DD, back to 1999-01-04). Empty means the latest published rate.
+                  type: string
+                  default: ''
+                  maxLength: 10
+              required:
+              - from
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

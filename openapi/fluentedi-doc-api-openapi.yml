@@ -1,0 +1,166 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Doc API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Doc
+  description: Documents (PDF, Word, Excel)
+paths:
+  /v1/doc/extract:
+    get:
+      operationId: doc_extract_get
+      summary: Extract the text of a PDF, Word, Excel or other document as markdown or plain…
+      description: 'Converts a document to markdown or plain text: pass a public URL or the file itself as base64, and get back the content with headings, tables and lists preserved, at a fraction of the tokens that rendered pages cost. Use it when a harness has no native reader for the format — .docx, .xlsx, .odt and .numbers rarely have one — when a document is only a URL away, or when a long PDF''s text matters and its layout does not. Handles PDF (.pdf), Word (.docx), Excel (.xlsx, .xlsm, .xlsb, .xls), OpenDocument (.odt, .ods), Apple Numbers, CSV, HTML, XML, and plain-text formats such as .txt and .md. The format is detected from magic bytes, not trusted from the file name, so a PDF served from a .php URL still converts. Two honest limits: a scanned PDF with no text layer has nothing to extract (this is conversion, not OCR), and legacy binary .doc and .ppt files are not readable — resave them as .docx or .pptx. Images are refused rather than described. Documents up to 10 MB.'
+      tags:
+      - Doc
+      parameters:
+      - name: url
+        in: query
+        required: false
+        description: Public URL of the document to fetch and convert.
+        schema:
+          description: Public URL of the document to fetch and convert.
+          type: string
+          maxLength: 4000
+          examples:
+          - https://arxiv.org/pdf/1706.03762
+      - name: base64
+        in: query
+        required: false
+        description: 'The file content as base64 (or a data: URI) instead of a URL, for documents not publicly reachable. Up to 10 MB decoded.'
+        schema:
+          description: 'The file content as base64 (or a data: URI) instead of a URL, for documents not publicly reachable. Up to 10 MB decoded.'
+          type: string
+          default: ''
+          maxLength: 14000000
+      - name: filename
+        in: query
+        required: false
+        description: Original file name, e.g. "report.docx". Only needed when the format cannot be detected from the URL or the bytes.
+        schema:
+          description: Original file name, e.g. "report.docx". Only needed when the format cannot be detected from the URL or the bytes.
+          type: string
+          default: ''
+          maxLength: 300
+      - name: format
+        in: query
+        required: false
+        description: 'Output style: markdown keeps headings, tables and lists; text strips them.'
+        schema:
+          description: 'Output style: markdown keeps headings, tables and lists; text strips them.'
+          type: string
+          enum:
+          - markdown
+          - text
+          default: markdown
+      - name: max_chars
+        in: query
+        required: false
+        description: Truncate the extracted content beyond this many characters.
+        schema:
+          description: Truncate the extracted content beyond this many characters.
+          type: integer
+          default: 200000
+          minimum: 100
+          maximum: 2000000
+      - name: timeout_ms
+        in: query
+        required: false
+        description: Fetch timeout in milliseconds when url is used.
+        schema:
+          description: Fetch timeout in milliseconds when url is used.
+          type: integer
+          default: 15000
+          minimum: 1000
+          maximum: 30000
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: doc_extract_post
+      summary: Extract the text of a PDF, Word, Excel or other document as markdown or plain…
+      description: 'Converts a document to markdown or plain text: pass a public URL or the file itself as base64, and get back the content with headings, tables and lists preserved, at a fraction of the tokens that rendered pages cost. Use it when a harness has no native reader for the format — .docx, .xlsx, .odt and .numbers rarely have one — when a document is only a URL away, or when a long PDF''s text matters and its layout does not. Handles PDF (.pdf), Word (.docx), Excel (.xlsx, .xlsm, .xlsb, .xls), OpenDocument (.odt, .ods), Apple Numbers, CSV, HTML, XML, and plain-text formats such as .txt and .md. The format is detected from magic bytes, not trusted from the file name, so a PDF served from a .php URL still converts. Two honest limits: a scanned PDF with no text layer has nothing to extract (this is conversion, not OCR), and legacy binary .doc and .ppt files are not readable — resave them as .docx or .pptx. Images are refused rather than described. Documents up to 10 MB.'
+      tags:
+      - Doc
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  description: Public URL of the document to fetch and convert.
+                  type: string
+                  maxLength: 4000
+                  examples:
+                  - https://arxiv.org/pdf/1706.03762
+                base64:
+                  description: 'The file content as base64 (or a data: URI) instead of a URL, for documents not publicly reachable. Up to 10 MB decoded.'
+                  type: string
+                  default: ''
+                  maxLength: 14000000
+                filename:
+                  description: Original file name, e.g. "report.docx". Only needed when the format cannot be detected from the URL or the bytes.
+                  type: string
+                  default: ''
+                  maxLength: 300
+                format:
+                  description: 'Output style: markdown keeps headings, tables and lists; text strips them.'
+                  type: string
+                  enum:
+                  - markdown
+                  - text
+                  default: markdown
+                max_chars:
+                  description: Truncate the extracted content beyond this many characters.
+                  type: integer
+                  default: 200000
+                  minimum: 100
+                  maximum: 2000000
+                timeout_ms:
+                  description: Fetch timeout in milliseconds when url is used.
+                  type: integer
+                  default: 15000
+                  minimum: 1000
+                  maximum: 30000
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.

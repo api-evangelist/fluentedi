@@ -1,0 +1,308 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Meta API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Meta
+  description: Finding your way around
+paths:
+  /v1/tool/search:
+    get:
+      operationId: tool_search_get
+      summary: Find the right tool for a task by describing it in plain language
+      description: 'Searches every tool by name, summary, description and keywords, and returns the closest matches with their endpoints and parameters. Use this instead of loading the whole catalogue: describe the job ("check whether a shipment is late", "fix broken JSON", "validate a barcode check digit") and call what comes back. Each result says why it matched, so a wrong match is obvious rather than plausible.'
+      tags:
+      - Meta
+      parameters:
+      - name: q
+        in: query
+        required: true
+        description: What you are trying to do, in plain language.
+        schema:
+          description: What you are trying to do, in plain language.
+          type: string
+          maxLength: 300
+          examples:
+          - check if a date falls inside a shipping window
+      - name: limit
+        in: query
+        required: false
+        description: Maximum matches to return.
+        schema:
+          description: Maximum matches to return.
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 25
+      - name: detail
+        in: query
+        required: false
+        description: Include full parameter schemas and worked examples for each match.
+        schema:
+          description: Include full parameter schemas and worked examples for each match.
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: tool_search_post
+      summary: Find the right tool for a task by describing it in plain language
+      description: 'Searches every tool by name, summary, description and keywords, and returns the closest matches with their endpoints and parameters. Use this instead of loading the whole catalogue: describe the job ("check whether a shipment is late", "fix broken JSON", "validate a barcode check digit") and call what comes back. Each result says why it matched, so a wrong match is obvious rather than plausible.'
+      tags:
+      - Meta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                q:
+                  description: What you are trying to do, in plain language.
+                  type: string
+                  maxLength: 300
+                  examples:
+                  - check if a date falls inside a shipping window
+                limit:
+                  description: Maximum matches to return.
+                  type: integer
+                  default: 5
+                  minimum: 1
+                  maximum: 25
+                detail:
+                  description: Include full parameter schemas and worked examples for each match.
+                  type: boolean
+                  default: false
+              required:
+              - q
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/tool/describe:
+    get:
+      operationId: tool_describe_get
+      summary: Get the full parameter schema and worked examples for one tool
+      description: 'Returns everything needed to call a tool correctly: its complete JSON Schema, every parameter with type and default, and examples known to work. Pair it with tool.search — search to find the name, describe to learn the shape, then call. This exists so the catalogue does not have to be loaded into context up front.'
+      tags:
+      - Meta
+      parameters:
+      - name: name
+        in: query
+        required: true
+        description: Tool name, e.g. "time.window". Underscores and slashes are accepted too.
+        schema:
+          description: Tool name, e.g. "time.window". Underscores and slashes are accepted too.
+          type: string
+          maxLength: 100
+          examples:
+          - time.window
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: tool_describe_post
+      summary: Get the full parameter schema and worked examples for one tool
+      description: 'Returns everything needed to call a tool correctly: its complete JSON Schema, every parameter with type and default, and examples known to work. Pair it with tool.search — search to find the name, describe to learn the shape, then call. This exists so the catalogue does not have to be loaded into context up front.'
+      tags:
+      - Meta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Tool name, e.g. "time.window". Underscores and slashes are accepted too.
+                  type: string
+                  maxLength: 100
+                  examples:
+                  - time.window
+              required:
+              - name
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/tool/call:
+    get:
+      operationId: tool_call_get
+      summary: Invoke any tool by name, including ones not in the default listing
+      description: Dispatches to any tool in the catalogue. Most clients cap how many tools they will hold at once — Cursor drops everything past roughly forty across all servers combined — so only a core set is listed by default. Everything else is reachable here. Find a name with tool.search, check its shape with tool.describe, then call it through this.
+      tags:
+      - Meta
+      parameters:
+      - name: tool
+        in: query
+        required: true
+        description: Name of the tool to invoke.
+        schema:
+          description: Name of the tool to invoke.
+          type: string
+          maxLength: 100
+          examples:
+          - gs1.checkdigit
+      - name: args
+        in: query
+        required: false
+        description: Arguments for that tool.
+        schema:
+          description: Arguments for that tool.
+          type: object
+          default: {}
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: tool_call_post
+      summary: Invoke any tool by name, including ones not in the default listing
+      description: Dispatches to any tool in the catalogue. Most clients cap how many tools they will hold at once — Cursor drops everything past roughly forty across all servers combined — so only a core set is listed by default. Everything else is reachable here. Find a name with tool.search, check its shape with tool.describe, then call it through this.
+      tags:
+      - Meta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tool:
+                  description: Name of the tool to invoke.
+                  type: string
+                  maxLength: 100
+                  examples:
+                  - gs1.checkdigit
+                args:
+                  description: Arguments for that tool.
+                  type: object
+                  default: {}
+              required:
+              - tool
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/batch:
+    post:
+      operationId: batch
+      summary: Run up to 20 tool calls in a single request
+      description: Each call is executed independently; one failure does not abort the others.
+      tags:
+      - Meta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - calls
+              properties:
+                calls:
+                  type: array
+                  maxItems: 20
+                  items:
+                    type: object
+                    required:
+                    - tool
+                    properties:
+                      tool:
+                        type: string
+                      args:
+                        type: object
+      responses:
+        '200':
+          description: One result object per call, in order.

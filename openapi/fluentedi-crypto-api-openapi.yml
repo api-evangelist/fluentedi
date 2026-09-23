@@ -1,0 +1,672 @@
+openapi: 3.2.0
+info:
+  title: FluentEDI Crypto API
+  version: 1.1.0
+  summary: Deterministic tools for AI agents. No key, no signup, no SDK.
+  description: 'A public HTTP API of deterministic tools for the work a language model cannot do reliably by reasoning: knowing the current time in any timezone and whether an instant falls inside a window, exact arithmetic, hashing and signature verification, canonicalizing and content-addressing JSON, repairing malformed JSON and pinpointing where it broke, querying and diffing structured data, parsing CSV correctly, converting units, colours and currencies at live ECB rates, testing regular expressions…'
+  license:
+    name: Free to use
+    identifier: MIT
+servers:
+- url: https://fluentedi.com
+tags:
+- name: Crypto
+  description: Hashing, signatures, encoding and identifiers
+paths:
+  /v1/hash:
+    get:
+      operationId: hash_get
+      summary: Hash or HMAC-sign text with MD5, SHA-1, SHA-256/384/512 or CRC32
+      description: Computes cryptographic digests and HMAC signatures. Returns hex and base64 at once, so a webhook signature can be compared in whichever encoding the provider uses. MD5 and CRC32 are included for checksums and legacy fixtures; they are not secure for authentication.
+      tags:
+      - Crypto
+      parameters:
+      - name: input
+        in: query
+        required: true
+        description: Text to hash.
+        schema:
+          description: Text to hash.
+          type: string
+          maxLength: 200000
+          examples:
+          - hello world
+      - name: algorithms
+        in: query
+        required: false
+        description: 'Any of: md5, sha1, sha256, sha384, sha512, crc32.'
+        schema:
+          description: 'Any of: md5, sha1, sha256, sha384, sha512, crc32.'
+          type: array
+          default:
+          - sha256
+          items:
+            type: string
+          examples:
+          - - sha256
+            - md5
+      - name: hmac_key
+        in: query
+        required: false
+        description: When set, computes HMAC-<algorithm> with this key instead of a plain digest. Not supported for md5/crc32.
+        schema:
+          description: When set, computes HMAC-<algorithm> with this key instead of a plain digest. Not supported for md5/crc32.
+          type: string
+          default: ''
+          maxLength: 4096
+      - name: input_encoding
+        in: query
+        required: false
+        description: How to read `input` into bytes.
+        schema:
+          description: How to read `input` into bytes.
+          type: string
+          enum:
+          - utf8
+          - hex
+          - base64
+          default: utf8
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: hash_post
+      summary: Hash or HMAC-sign text with MD5, SHA-1, SHA-256/384/512 or CRC32
+      description: Computes cryptographic digests and HMAC signatures. Returns hex and base64 at once, so a webhook signature can be compared in whichever encoding the provider uses. MD5 and CRC32 are included for checksums and legacy fixtures; they are not secure for authentication.
+      tags:
+      - Crypto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  description: Text to hash.
+                  type: string
+                  maxLength: 200000
+                  examples:
+                  - hello world
+                algorithms:
+                  description: 'Any of: md5, sha1, sha256, sha384, sha512, crc32.'
+                  type: array
+                  default:
+                  - sha256
+                  items:
+                    type: string
+                  examples:
+                  - - sha256
+                    - md5
+                hmac_key:
+                  description: When set, computes HMAC-<algorithm> with this key instead of a plain digest. Not supported for md5/crc32.
+                  type: string
+                  default: ''
+                  maxLength: 4096
+                input_encoding:
+                  description: How to read `input` into bytes.
+                  type: string
+                  enum:
+                  - utf8
+                  - hex
+                  - base64
+                  default: utf8
+              required:
+              - input
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/crypto/verify:
+    get:
+      operationId: crypto_verify_get
+      summary: Verify an Ed25519, ECDSA, RSA or HMAC signature against a message and public key
+      description: Checks a detached signature and returns a single boolean you can act on. Signature verification is not something to reason about — a signature is either valid under the key or it is not, and an agent that accepts an identity claim without checking has accepted anything. Supports Ed25519 (raw 32-byte or SPKI keys), ECDSA P-256/P-384, RSA PKCS#1 v1.5 and PSS, and HMAC-SHA256/512.
+      tags:
+      - Crypto
+      parameters:
+      - name: message
+        in: query
+        required: true
+        description: The signed message.
+        schema:
+          description: The signed message.
+          type: string
+          maxLength: 200000
+      - name: signature
+        in: query
+        required: true
+        description: The detached signature.
+        schema:
+          description: The detached signature.
+          type: string
+          maxLength: 8000
+      - name: public_key
+        in: query
+        required: true
+        description: 'Public key: raw bytes, SPKI DER, or PEM. For HMAC, the shared secret.'
+        schema:
+          description: 'Public key: raw bytes, SPKI DER, or PEM. For HMAC, the shared secret.'
+          type: string
+          maxLength: 8000
+      - name: algorithm
+        in: query
+        required: false
+        description: Signature algorithm.
+        schema:
+          description: Signature algorithm.
+          type: string
+          enum:
+          - ed25519
+          - ecdsa-p256
+          - ecdsa-p384
+          - rsa-pkcs1
+          - rsa-pss
+          - hmac-sha256
+          - hmac-sha512
+          default: ed25519
+      - name: message_encoding
+        in: query
+        required: false
+        description: How to read `message` into bytes.
+        schema:
+          description: How to read `message` into bytes.
+          type: string
+          enum:
+          - utf8
+          - hex
+          - base64
+          default: utf8
+      - name: signature_encoding
+        in: query
+        required: false
+        description: How to read `signature` into bytes.
+        schema:
+          description: How to read `signature` into bytes.
+          type: string
+          enum:
+          - hex
+          - base64
+          - utf8
+          default: hex
+      - name: key_encoding
+        in: query
+        required: false
+        description: How to read `public_key` when it is not PEM.
+        schema:
+          description: How to read `public_key` when it is not PEM.
+          type: string
+          enum:
+          - hex
+          - base64
+          - utf8
+          default: hex
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: crypto_verify_post
+      summary: Verify an Ed25519, ECDSA, RSA or HMAC signature against a message and public key
+      description: Checks a detached signature and returns a single boolean you can act on. Signature verification is not something to reason about — a signature is either valid under the key or it is not, and an agent that accepts an identity claim without checking has accepted anything. Supports Ed25519 (raw 32-byte or SPKI keys), ECDSA P-256/P-384, RSA PKCS#1 v1.5 and PSS, and HMAC-SHA256/512.
+      tags:
+      - Crypto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  description: The signed message.
+                  type: string
+                  maxLength: 200000
+                signature:
+                  description: The detached signature.
+                  type: string
+                  maxLength: 8000
+                public_key:
+                  description: 'Public key: raw bytes, SPKI DER, or PEM. For HMAC, the shared secret.'
+                  type: string
+                  maxLength: 8000
+                algorithm:
+                  description: Signature algorithm.
+                  type: string
+                  enum:
+                  - ed25519
+                  - ecdsa-p256
+                  - ecdsa-p384
+                  - rsa-pkcs1
+                  - rsa-pss
+                  - hmac-sha256
+                  - hmac-sha512
+                  default: ed25519
+                message_encoding:
+                  description: How to read `message` into bytes.
+                  type: string
+                  enum:
+                  - utf8
+                  - hex
+                  - base64
+                  default: utf8
+                signature_encoding:
+                  description: How to read `signature` into bytes.
+                  type: string
+                  enum:
+                  - hex
+                  - base64
+                  - utf8
+                  default: hex
+                key_encoding:
+                  description: How to read `public_key` when it is not PEM.
+                  type: string
+                  enum:
+                  - hex
+                  - base64
+                  - utf8
+                  default: hex
+              required:
+              - message
+              - signature
+              - public_key
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/jwt/decode:
+    get:
+      operationId: jwt_decode_get
+      summary: Decode a JWT and check its expiry, optionally verifying an HMAC signature
+      description: Splits a JSON Web Token, decodes header and payload, and converts every standard time claim (exp, iat, nbf, auth_time) into readable dates with a live expiry verdict. Supply `secret` to verify an HS256/384/512 signature. Decoding never validates trust on its own — an unverified token is just base64 text that anyone can forge.
+      tags:
+      - Crypto
+      parameters:
+      - name: token
+        in: query
+        required: true
+        description: The JWT (three base64url segments separated by dots). A leading "Bearer " is ignored.
+        schema:
+          description: The JWT (three base64url segments separated by dots). A leading "Bearer " is ignored.
+          type: string
+          maxLength: 100000
+      - name: secret
+        in: query
+        required: false
+        description: HMAC secret. When provided, the signature is verified for HS256/HS384/HS512.
+        schema:
+          description: HMAC secret. When provided, the signature is verified for HS256/HS384/HS512.
+          type: string
+          default: ''
+          maxLength: 4096
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: jwt_decode_post
+      summary: Decode a JWT and check its expiry, optionally verifying an HMAC signature
+      description: Splits a JSON Web Token, decodes header and payload, and converts every standard time claim (exp, iat, nbf, auth_time) into readable dates with a live expiry verdict. Supply `secret` to verify an HS256/384/512 signature. Decoding never validates trust on its own — an unverified token is just base64 text that anyone can forge.
+      tags:
+      - Crypto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  description: The JWT (three base64url segments separated by dots). A leading "Bearer " is ignored.
+                  type: string
+                  maxLength: 100000
+                secret:
+                  description: HMAC secret. When provided, the signature is verified for HS256/HS384/HS512.
+                  type: string
+                  default: ''
+                  maxLength: 4096
+              required:
+              - token
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/encode:
+    get:
+      operationId: encode_get
+      summary: Convert text between base64, base64url, hex, URL and HTML encodings
+      description: Round-trips a value between encodings in one call. Handles base64url (JWT-style, no padding) and distinguishes full-URI encoding from component encoding, which is the usual cause of double-encoded query strings.
+      tags:
+      - Crypto
+      parameters:
+      - name: input
+        in: query
+        required: true
+        description: Value to convert.
+        schema:
+          description: Value to convert.
+          type: string
+          maxLength: 500000
+          examples:
+          - hello world
+      - name: from
+        in: query
+        required: false
+        description: Encoding of the input.
+        schema:
+          description: Encoding of the input.
+          type: string
+          enum:
+          - text
+          - base64
+          - base64url
+          - hex
+          - url
+          - url_component
+          - html
+          default: text
+      - name: to
+        in: query
+        required: false
+        description: Encoding to produce.
+        schema:
+          description: Encoding to produce.
+          type: string
+          enum:
+          - text
+          - base64
+          - base64url
+          - hex
+          - url
+          - url_component
+          - html
+          default: base64
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: encode_post
+      summary: Convert text between base64, base64url, hex, URL and HTML encodings
+      description: Round-trips a value between encodings in one call. Handles base64url (JWT-style, no padding) and distinguishes full-URI encoding from component encoding, which is the usual cause of double-encoded query strings.
+      tags:
+      - Crypto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  description: Value to convert.
+                  type: string
+                  maxLength: 500000
+                  examples:
+                  - hello world
+                from:
+                  description: Encoding of the input.
+                  type: string
+                  enum:
+                  - text
+                  - base64
+                  - base64url
+                  - hex
+                  - url
+                  - url_component
+                  - html
+                  default: text
+                to:
+                  description: Encoding to produce.
+                  type: string
+                  enum:
+                  - text
+                  - base64
+                  - base64url
+                  - hex
+                  - url
+                  - url_component
+                  - html
+                  default: base64
+              required:
+              - input
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+  /v1/id/generate:
+    get:
+      operationId: id_generate_get
+      summary: Generate UUIDv4, UUIDv7, ULID, nanoid or short random IDs
+      description: Cryptographically random identifiers from the edge. UUIDv7 and ULID embed a millisecond timestamp and sort lexicographically in creation order, which makes them the right default for database primary keys; UUIDv4 is fully random and does not sort. The embedded timestamp is decoded back for you.
+      tags:
+      - Crypto
+      parameters:
+      - name: type
+        in: query
+        required: false
+        description: Identifier format.
+        schema:
+          description: Identifier format.
+          type: string
+          enum:
+          - uuid4
+          - uuid7
+          - ulid
+          - nanoid
+          - hex
+          - numeric
+          default: uuid4
+      - name: count
+        in: query
+        required: false
+        description: How many to generate.
+        schema:
+          description: How many to generate.
+          type: integer
+          default: 1
+          minimum: 1
+          maximum: 500
+      - name: length
+        in: query
+        required: false
+        description: Length for nanoid, hex and numeric types.
+        schema:
+          description: Length for nanoid, hex and numeric types.
+          type: integer
+          default: 21
+          minimum: 1
+          maximum: 256
+      - name: uppercase
+        in: query
+        required: false
+        description: Uppercase the output where the format allows it.
+        schema:
+          description: Uppercase the output where the format allows it.
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
+    post:
+      operationId: id_generate_post
+      summary: Generate UUIDv4, UUIDv7, ULID, nanoid or short random IDs
+      description: Cryptographically random identifiers from the edge. UUIDv7 and ULID embed a millisecond timestamp and sort lexicographically in creation order, which makes them the right default for database primary keys; UUIDv4 is fully random and does not sort. The embedded timestamp is decoded back for you.
+      tags:
+      - Crypto
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  description: Identifier format.
+                  type: string
+                  enum:
+                  - uuid4
+                  - uuid7
+                  - ulid
+                  - nanoid
+                  - hex
+                  - numeric
+                  default: uuid4
+                count:
+                  description: How many to generate.
+                  type: integer
+                  default: 1
+                  minimum: 1
+                  maximum: 500
+                length:
+                  description: Length for nanoid, hex and numeric types.
+                  type: integer
+                  default: 21
+                  minimum: 1
+                  maximum: 256
+                uppercase:
+                  description: Uppercase the output where the format allows it.
+                  type: boolean
+                  default: false
+              required: []
+              additionalProperties: false
+      responses:
+        '200':
+          description: Tool result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tool:
+                    type: string
+                  result:
+                    type: object
+                    description: Tool-specific result payload.
+        '400':
+          description: Invalid input. The body carries the parameter schema and working examples.
