@@ -8,6 +8,22 @@ description: 45 deterministic tools for AI agents, free and with no API key, sig
   signature verification, secret and PII scanning, link-liveness checking with retraction detection, endpoint
   assertion, and text position conversion.
 url: https://raw.githubusercontent.com/api-evangelist/fluentedi/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  license_evidence:
+    not_product:
+    - mastermanas805/fluentedi-mcp
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-not-product
+  generated: '2026-09-25'
+  method: derived
 created: '2026-09-03'
 modified: '2026-09-03'
 specificationVersion: '0.21'
@@ -27,7 +43,6 @@ apis:
   name: FluentEDI Compute API
   description: Calculation and conversion
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Compute
   tags_raw:
@@ -59,7 +74,6 @@ apis:
   name: FluentEDI Crypto API
   description: Hashing, signatures, encoding and identifiers
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Crypto
   tags_raw:
@@ -91,7 +105,6 @@ apis:
   name: FluentEDI Data API
   description: JSON and tabular data
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Data
   tags_raw:
@@ -123,7 +136,6 @@ apis:
   name: FluentEDI Doc API
   description: Documents (PDF, Word, Excel)
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Doc
   tags_raw:
@@ -155,7 +167,6 @@ apis:
   name: FluentEDI Edi API
   description: EDI and retail supply chain (X12)
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - EDI
   tags_raw:
@@ -187,7 +198,6 @@ apis:
   name: FluentEDI Meta API
   description: Finding your way around
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Meta
   tags_raw:
@@ -219,7 +229,6 @@ apis:
   name: FluentEDI Schedule API
   description: Scheduling
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Schedule
   tags_raw:
@@ -251,7 +260,6 @@ apis:
   name: FluentEDI Text API
   description: Text
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Text
   tags_raw:
@@ -283,7 +291,6 @@ apis:
   name: FluentEDI Time API
   description: Time, dates and windows
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Time
   tags_raw:
@@ -315,7 +322,6 @@ apis:
   name: FluentEDI Web API
   description: Web and network
   humanURL: https://fluentedi.com/
-  baseURL: https://fluentedi.com
   tags:
   - Web
   tags_raw:
