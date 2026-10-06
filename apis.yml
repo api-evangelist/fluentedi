@@ -25,7 +25,7 @@ deliveryModel:
   generated: '2026-09-25'
   method: derived
 created: '2026-09-03'
-modified: '2026-09-03'
+modified: '2026-10-06'
 specificationVersion: '0.21'
 tags:
 - EDI
@@ -364,6 +364,8 @@ x-enrichment:
   artifacts_added: 30
   pass: local-v1
 common:
+- url: https://www.fluentedi.com/feed.xml
+  type: BlogRSS
 - type: MCPServer
   url: https://fluentedi.com/mcp
 - type: MCPServer
