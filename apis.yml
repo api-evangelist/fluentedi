@@ -364,6 +364,8 @@ x-enrichment:
   artifacts_added: 30
   pass: local-v1
 common:
+- type: Pricing
+  url: https://fluentedi.com/llms.txt
 - url: https://www.fluentedi.com/feed.xml
   type: BlogRSS
 - type: MCPServer
