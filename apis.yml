@@ -75,7 +75,7 @@ apis:
   description: Hashing, signatures, encoding and identifiers
   humanURL: https://fluentedi.com/
   tags:
-  - Crypto
+  - Cryptocurrency
   tags_raw:
   - crypto
   properties:
