@@ -64,25 +64,119 @@ divergence:
     subset rather than a missing capability - but an MCP client that only reads tools/list sees 19, not
     49.
 tools:
-- time_now
-- time_convert
-- time_diff
-- time_window
-- cron_next
-- json_query
-- json_repair
-- doc_extract
-- hash
-- math_eval
-- http_check
-- http_assert
-- domain_lookup
-- edi_parse
-- edi_validate
-- edi_build
-- tool_search
-- tool_describe
-- tool_call
+- name: time_now
+  description: 'Returns the authoritative current time in one or more timezones, with UTC offset, ISO
+    week number, day of year, weekend flag, and daylight-saving state. Use this instead of guessing the
+    date: a language model has no clock, and its training cutoff is not today.'
+- name: time_convert
+  description: Converts one instant into any number of timezones, handling daylight saving transitions
+    correctly. Naive inputs (no Z or offset) are read as wall-clock time in `from`; inputs carrying an
+    offset are absolute.
+- name: time_diff
+  description: 'Computes the elapsed time between two instants: exact totals in each unit, a calendar
+    breakdown (years/months/days rather than ''thirteen and a half months''), the count of weekdays in
+    between, and a human phrase. Negative when `to` precedes `from`.'
+- name: time_window
+  description: 'Answers the questions a deadline actually poses: is this instant inside the window, how
+    long until it opens or closes, and if it is outside, by how much. Optionally compares two windows
+    for overlap. A window comparison that silently succeeds against the wrong bounds is a failure mode
+    that does not raise an error anywhere — the ship window is missed, or the ASN is late, and the only
+    symptom is a chargeback later. This computes the boundary instead of assuming it.'
+- name: cron_next
+  description: Parses a standard 5-field cron expression (or 6-field with leading seconds, or a macro
+    like @daily), validates it, describes it in plain English, and computes the next run times in a given
+    timezone with daylight-saving handled. Use it before writing a schedule to config — cron's day-of-month/day-of-week
+    OR-semantics and step syntax are a common source of silently wrong schedules.
+- name: json_query
+  description: Runs a JSONPath query and returns the matching values with their concrete paths. Supports
+    property access, array indexing (including negative indices), slices, wildcards, recursive descent
+    (`..`) and filters (`[?(@.price > 10)]`). Pull three fields out of a large API response without carrying
+    the whole document through context.
+- name: json_repair
+  description: 'Takes JSON that almost parses and makes it parse: markdown code fences, prose wrapped
+    around the object, trailing commas, single or smart quotes, unquoted keys, Python True/False/None,
+    comments, NaN, and brackets left open by a truncated response. Every change is reported, so the caller
+    learns what its generator got wrong rather than silently depending on a fixer. When the input cannot
+    be salvaged it returns the precise line, column and a caret pointing at the offending character —
+    which is what makes the next attempt succeed instead of guessing.'
+- name: doc_extract
+  description: 'Converts a document to markdown or plain text: pass a public URL or the file itself as
+    base64, and get back the content with headings, tables and lists preserved, at a fraction of the tokens
+    that rendered pages cost. Use it when a harness has no native reader for the format — .docx, .xlsx,
+    .odt and .numbers rarely have one — when a document is only a URL away, or when a long PDF''s text
+    matters and its layout does not. Handles PDF (.pdf), Word (.docx), Excel (.xlsx, .xlsm, .xlsb, .xls),
+    OpenDocument (.odt, .ods), Apple Numbers, CSV, HTML, XML, and plain-text formats such as .txt and
+    .md. The format is detected from magic bytes, not trusted from the file name, so a PDF served from
+    a .php URL still converts. Two honest limits: a scanned PDF with no text layer has nothing to extract
+    (this is conversion, not OCR), and legacy binary .doc and .ppt files are not readable — resave them
+    as .docx or .pptx. Images are refused rather than described. Documents up to 10 MB.'
+- name: hash
+  description: Computes cryptographic digests and HMAC signatures. Returns hex and base64 at once, so
+    a webhook signature can be compared in whichever encoding the provider uses. MD5 and CRC32 are included
+    for checksums and legacy fixtures; they are not secure for authentication.
+- name: math_eval
+  description: Evaluates arithmetic with correct operator precedence, parentheses, exponentiation, factorials,
+    named variables and 30+ functions. Language models perform arithmetic by pattern-matching and quietly
+    get long multiplications and compounding wrong; this computes the number instead of predicting it.
+- name: http_check
+  description: 'Resolves a URL and reports what actually happens to it — final status, the full redirect
+    chain, content type and page title. Link rot is faster than it feels: one agent measured seven dead
+    URLs out of 286 across fourteen days. This handles the three cases a naive checker gets wrong: an
+    arXiv v1 to v2 redirect is a version change, not a break; a 403 is a blocked crawler, not a dead page;
+    and a DOI can return 200 while the page behind it is now a retraction notice, which is the worst case
+    because a simple status check passes and the reader gets something else. Response bodies are never
+    returned — only status, headers, title and flags.'
+- name: http_assert
+  description: The difference between an agent believing it succeeded and knowing it did. http.check tells
+    you a URL is alive; this tells you it is correct. Assert the status, response headers, values at JSONPath
+    expressions, substrings in the body and a latency ceiling, and get back one boolean plus a per-check
+    breakdown showing expected against actual. An agent that has just deployed, migrated or reconfigured
+    something can prove the outcome rather than reporting the absence of an error, which is the usual
+    way agents claim a success they have not actually achieved.
+- name: domain_lookup
+  description: 'Answers the questions WHOIS used to answer, over RDAP — the structured protocol the registries
+    themselves now serve — with no key and no scraping: who registered a domain, when it expires, which
+    registrar and nameservers it uses, whether transfers are locked, and whether DNSSEC is signed. Give
+    it an IP address instead and it returns the owning network: name, CIDR range, and the responsible
+    registry. A domain that does not resolve in RDAP is reported as likely available to register — an
+    answer, not an error. These are live registry facts that no training corpus can supply: registrations,
+    expiries and transfers happen daily, and an agent that guesses at them guesses wrong.'
+- name: edi_parse
+  description: 'Reads a raw ASC X12 interchange and returns it as JSON: delimiters taken from the ISA
+    header, the ISA/GS/ST envelope decoded, every segment split into named elements, and a document-specific
+    summary - purchase order lines for an 850, the HL shipment hierarchy and SSCCs for an 856, invoice
+    totals for an 810. EDI is positional and delimiter-sensitive, and unreadable without a spec table;
+    reading it by inspection produces confident nonsense, which is why this is a tool rather than a prompt.'
+- name: edi_validate
+  description: 'Runs the structural checks a trading partner runs before rejecting a file: control numbers
+    matching between the ISA/IEA, GS/GE and ST/SE header and trailer pairs, declared counts matching actual
+    counts, and - for an 856 - the HL hierarchy. HL faults are the usual cause of ASN rejections and chargebacks:
+    a parent ID naming no existing node, a duplicate HL01, an unknown level code, a missing carton level.
+    Every finding names the segment and states what the value should have been.'
+- name: edi_build
+  description: 'Compiles structured JSON into standards-valid X12. The parts that get documents rejected
+    are exactly the parts a language model cannot hold in its head: the 856 hierarchy needs sequential
+    HL IDs where every level names its parent''s ID, and on a multi-carton, multi-SKU shipment that bookkeeping
+    goes wrong silently. The ISA header is fixed-width — 106 characters exactly, every element space-padded
+    to size — and one character out crashes the receiver''s translator. Segment counts in SE01, CTT01,
+    GE01 and IEA01 must agree with what was actually emitted. All of that is computed here rather than
+    written by hand.'
+- name: tool_search
+  description: 'Searches every tool by name, summary, description and keywords, and returns the closest
+    matches with their endpoints and parameters. Use this instead of loading the whole catalogue: describe
+    the job ("check whether a shipment is late", "fix broken JSON", "validate a barcode check digit")
+    and call what comes back. Each result says why it matched, so a wrong match is obvious rather than
+    plausible.'
+- name: tool_describe
+  description: 'Returns everything needed to call a tool correctly: its complete JSON Schema, every parameter
+    with type and default, and examples known to work. Pair it with tool.search — search to find the name,
+    describe to learn the shape, then call. This exists so the catalogue does not have to be loaded into
+    context up front.'
+- name: tool_call
+  description: Dispatches to any tool in the catalogue. Most clients cap how many tools they will hold
+    at once — Cursor drops everything past roughly forty across all servers combined — so only a core
+    set is listed by default. Everything else is reachable here. Find a name with tool.search, check its
+    shape with tool.describe, then call it through this.
 oauth:
   /.well-known/oauth-authorization-server: 404
   /.well-known/oauth-protected-resource: 404
@@ -112,3 +206,4 @@ tool_quality:
   scored: false
   note: Facts from the saved tools/list capture (mcp_tool_quality.py); recorded, not scored. Checks learned
     from Glimind's agent-readiness audit.
+tools_count: 19
