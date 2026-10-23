@@ -737,3 +737,9 @@ paths:
                     description: Tool-specific result payload.
         '400':
           description: Invalid input. The body carries the parameter schema and working examples.
+x-provenance:
+  method: harvested
+  publisher: FluentEDI
+  source: https://fluentedi.com/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)

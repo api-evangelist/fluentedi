@@ -306,3 +306,9 @@ paths:
       responses:
         '200':
           description: One result object per call, in order.
+x-provenance:
+  method: harvested
+  publisher: FluentEDI
+  source: https://fluentedi.com/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
