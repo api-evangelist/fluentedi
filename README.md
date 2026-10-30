@@ -1,4 +1,4 @@
-# fluentedi
+# FluentEDI
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -63,3 +63,129 @@
 >
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
+
+45 deterministic tools for AI agents, free and with no API key, signup or rate limit. Every tool is a single stateless GET or POST returning JSON, read-only and idempotent. Coverage runs deepest in retail EDI -- X12 850/856/810/855/997 parsing, generating an 856 with correct HL parent pointers and a fixed-width 106-character ISA, envelope validation, decoding a 997 acknowledgment into plain language, and GS1 check digits -- alongside timezone and delivery-window arithmetic, cron, exact maths, JSON repair with line/column error localisation, JSONPath, RFC 8785 canonical JSON with CIDv1, Ed25519/ECDSA/RSA signature verification, secret and PII scanning, link-liveness checking with retraction detection, endpoint assertion, and text position conversion.
+
+**Areas:** EDI · X12 · Retail EDI · AI Agents · MCP · Developer Tools · JSON · Cryptography · Data Validation · Supply Chain
+
+## FluentEDI on APIs.io
+
+Everything profiled for FluentEDI is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/fluentedi/](https://apis.io/providers/fluentedi/)** — or go straight to one of the APIs or properties below.
+
+### APIs (10)
+
+- [FluentEDI Compute API](https://apis.io/apis/fluentedi/fluentedi-compute-api/) — Calculation and conversion
+- [FluentEDI Crypto API](https://apis.io/apis/fluentedi/fluentedi-crypto-api/) — Hashing, signatures, encoding and identifiers
+- [FluentEDI Data API](https://apis.io/apis/fluentedi/fluentedi-data-api/) — JSON and tabular data
+- [FluentEDI Doc API](https://apis.io/apis/fluentedi/fluentedi-doc-api/) — Documents (PDF, Word, Excel)
+- [FluentEDI Edi API](https://apis.io/apis/fluentedi/fluentedi-edi-api/) — EDI and retail supply chain (X12)
+- [FluentEDI Meta API](https://apis.io/apis/fluentedi/fluentedi-meta-api/) — Finding your way around
+- [FluentEDI Schedule API](https://apis.io/apis/fluentedi/fluentedi-schedule-api/) — Scheduling
+- [FluentEDI Text API](https://apis.io/apis/fluentedi/fluentedi-text-api/) — Text
+- [FluentEDI Time API](https://apis.io/apis/fluentedi/fluentedi-time-api/) — Time, dates and windows
+- [FluentEDI Web API](https://apis.io/apis/fluentedi/fluentedi-web-api/) — Web and network
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [mcp](https://apis.io/servers/fluentedi/mcp/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Fluentedi Agentic Access](https://apis.io/agentic-access/fluentedi/fluentedi-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Fluentedi Openapi Overlay](https://apis.io/overlays/fluentedi/fluentedi-openapi-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Fluentedi Authentication](https://apis.io/security/fluentedi/fluentedi-authentication/)
+- [Fluentedi Domain Security](https://apis.io/security/fluentedi/fluentedi-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Fluentedi Plans Pricing](https://apis.io/plans/fluentedi/fluentedi-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Fluentedi Rate Limits](https://apis.io/rate-limits/fluentedi/fluentedi-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.fluentedi.com/)
+- [Pricing](https://fluentedi.com/llms.txt)
+- [Privacy policy](https://fluentedi.com/privacy)
+- [Status](https://fluentedi.com/health)
+
+## API Evangelist rating
+
+**Kin Score 38.4** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 71.7 |
+| Contract quality | 49.8 |
+| Contract governance | 4.5 |
+| Operational transparency | 13.2 |
+| Developer ergonomics | 39.9 |
+| Access clarity | 42.1 |
+
+**Agent readiness 42.4** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | yes |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | — |
+
+**Regulatory alignment 20.6** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/fluentedi/](https://apis.io/providers/fluentedi/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for FluentEDI: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/fluentedi/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
